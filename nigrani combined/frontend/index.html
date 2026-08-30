@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIGRANI — Civic Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-orbit a"></div><div class="loader-orbit b"></div>
+  <div class="loader-logo"><img src="nigrani-logo.png" alt="NIGRANI"></div>
+  <div class="loader-info"><b>NIGRANI</b><span>INITIALIZING CIVIC INTELLIGENCE</span><i><em></em></i></div>
+  <div class="loader-bottom"><span>DELHI NCR / LIVE NETWORK</span><strong id="percent">00</strong></div>
+</div>
+
+<aside>
+  <div class="brand"><img src="nigrani-logo.png" alt="NIGRANI logo"><span>NIGRANI</span></div>
+  <nav>
+    <a class="active" href="#home">⌂ &nbsp; Overview</a>
+    <a href="#report">＋ &nbsp; New report</a>
+    <a href="#map">◉ &nbsp; Safety map</a>
+    <a href="#feed">▣ &nbsp; My reports</a>
+    <a href="#process">✦ &nbsp; AI assistant</a>
+  </nav>
+  <div class="side-live">● &nbsp; <b>Safety pulse</b><small><span id="sideLiveCount">00</span> active reports</small></div>
+</aside>
+
+<main>
+<header><span>CIVIC INTELLIGENCE / OVERVIEW</span><div>⌕　◔</div></header>
+
+<section id="home" class="hero">
+  <div class="copy">
+    <label>● LIVE CIVIC SAFETY NETWORK</label>
+    <h1>Notice what<br>others <em>miss.</em></h1>
+    <p>NIGRANI turns a simple street photograph into structured safety intelligence — then helps route it to the right place.</p>
+    <a class="btn" href="#report">Create report ↗</a>
+    <a class="ghost" href="#map">Explore map</a>
+  </div>
+  <div class="scene">
+    <div class="map3d">
+      <small>DELHI NCR　 <em>● LIVE</em></small>
+      <div class="grid"></div><span class="place p1">DWARKA</span><span class="place p2">ROHINI</span><span class="place p3">NOIDA</span>
+      <i class="pin x">!</i><i class="pin y">!</i><i class="pin z">!</i>
+    </div>
+    <div class="float one"><small>THIS WEEK</small><b>24</b><span>citizen reports</span></div>
+    <div class="float two"><small>NIGRANI AI</small><b>91%</b><span>successfully routed</span></div>
+    <div class="float three"><small>SAFETY SCORE</small><b>82<span>/100</span></b></div>
+  </div>
+</section>
+
+<div class="stats"><article>ACTIVE REPORTS<strong id="overviewActiveReports">00</strong><small>live reports in NIGRANI</small></article><article>ROUTED<strong id="overviewRouted">00</strong><small>successfully sent</small></article><article class="dark">AI ANALYSIS<strong>READY</strong><small>Gemini-powered analysis</small></article><article class="lime">TOTAL REPORTS<strong id="overviewTotalReports">00</strong><small>stored in backend</small></article></div>
+
+<section id="report">
+  <label>01 / REPORT</label><h2>Make a report<br><em>without the paperwork.</em></h2>
+  <div class="report-grid">
+    <div class="upload">
+      <small>NEW COMPLAINT　 01 / 03</small>
+      <div class="camera" id="cameraIcon">◉</div><h3>Capture a live photo</h3><p>Use your camera to capture a visible hazard. NIGRANI will do the heavy lifting.</p>
+      <video id="camera" autoplay playsinline muted hidden></video><canvas id="canvas" hidden></canvas><textarea id="complaintDescription" maxlength="500" placeholder="Describe the issue (optional)"></textarea><button class="btn" id="startCamera">Open camera ↗</button><button class="btn" id="capturePhoto" hidden>Capture photo ↗</button>
+      <footer>◉ Approximate location　 <button onclick="toast('Approximate location attached')">Detect</button></footer>
+    </div>
+    <div class="explain"><b>01</b><label>CAPTURE</label><h3>Start with what you can see.</h3><p>No categories to remember. No complicated forms. A photograph gives the system its first signal.</p><div>PHOTO　→　AI　→　ACTION</div></div>
+  </div>
+  <div id="preview"></div>
+</section>
+
+<section id="map">
+  <label>02 / SAFETY MAP</label><h2>The city,<br><em>as a signal.</em></h2>
+  <div class="map-panel"><div class="bigmap" id="bigmap"><span>DELHI NCR</span><div id="dynamicMapMarkers"></div></div><div class="mapstats"><article>CRITICAL<strong>08</strong><small>needs attention</small></article><article>HIGH<strong>11</strong><small>priority cases</small></article><article>MEDIUM<strong>05</strong><small>being monitored</small></article><article class="lime">ROUTING ENGINE<strong>ACTIVE</strong><small>Matched to relevant authority.</small></article></div></div>
+</section>
+
+<section id="feed">
+  <label>03 / COMMUNITY FEED</label><h2>What needs<br><em>attention.</em></h2>
+  <div class="feed" id="communityFeed">
+    <article><b>LOADING</b><div>…</div><section><h3>Loading live reports</h3><small>Connecting to NIGRANI network…</small></section><time>NOW</time></article>
+  </div>
+</section>
+
+<section id="process"><label>04 / AI ASSISTANT</label><h2>One signal.<br><em>Four simple moves.</em></h2><div class="steps"><article>01<strong>CAPTURE</strong><small>Photograph the hazard.</small></article><article>02<strong>UNDERSTAND</strong><small>AI identifies visible risks.</small></article><article>03<strong>REVIEW</strong><small>You approve the complaint.</small></article><article>04<strong>ROUTE</strong><small>The right authority receives it.</small></article></div></section>
+
+<section class="closing"><label>NIGRANI / CIVIC SAFETY INTELLIGENCE</label><h2>A safer city<br>starts with <em>noticing.</em></h2><a class="btn" href="#report">Report a hazard ↗</a></section>
+<footer>NIGRANI <span>Anonymous by design.</span><span>Built for civic action.</span></footer>
+</main>
+<script src="script.js"></script>
+</body></html>
