@@ -31,3 +31,269 @@
 
 #analysisResult{margin-top:10px;color:#82908a;font-size:11px;line-height:1.6}
 #analysisResult strong{color:#b7ff42}
+
+
+/* =========================
+   NIGRANI MOBILE OPTIMIZATION
+   ========================= */
+
+@media (max-width: 600px) {
+
+  /* Prevent horizontal overflow */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Sidebar → top mobile navigation */
+  aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 62px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-right: none;
+    border-bottom: 1px solid #1c2622;
+  }
+
+  .brand {
+    margin: 0;
+    font-size: 15px;
+    gap: 8px;
+  }
+
+  .brand span {
+    font-size: 15px;
+  }
+
+  .brand img {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Hide desktop-only sidebar elements */
+  aside .user,
+  aside nav,
+  aside .side-live {
+    display: none;
+  }
+
+  /* Main content */
+  main {
+    margin-left: 0;
+    padding-top: 62px;
+  }
+
+  /* Header */
+  header {
+    height: 55px;
+    padding: 0 16px;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: auto;
+    padding: 55px 18px 35px;
+    display: block;
+  }
+
+  .copy {
+    text-align: left;
+  }
+
+  .copy label {
+    font-size: 8px;
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 14vw, 60px);
+    line-height: .92;
+    margin: 14px 0;
+  }
+
+  .copy p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Hero buttons */
+  .btn,
+  .ghost {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 12px 0 0;
+  }
+
+  /* 3D scene */
+  .scene {
+    height: 300px;
+    margin-top: 35px;
+    overflow: hidden;
+  }
+
+  .map3d {
+    width: 95%;
+    height: 75%;
+    left: 2%;
+    top: 12%;
+  }
+
+  .float {
+    padding: 10px;
+    transform: scale(.72);
+  }
+
+  .float.one {
+    right: -18px;
+    top: 8%;
+  }
+
+  .float.two {
+    left: -18px;
+    bottom: 8%;
+  }
+
+  .float.three {
+    right: -5px;
+    bottom: -5%;
+  }
+
+  .float b {
+    font-size: 23px;
+  }
+
+  /* Stats */
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .stats article {
+    padding: 14px;
+  }
+
+  .stats strong {
+    font-size: 26px;
+  }
+
+  /* Sections */
+  section {
+    padding: 65px 18px;
+  }
+
+  h2 {
+    font-size: clamp(40px, 12vw, 58px);
+    margin-bottom: 30px;
+  }
+
+  /* Report section */
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload,
+  .explain {
+    min-height: auto;
+    padding: 20px;
+  }
+
+  .camera {
+    width: 105px;
+    height: 105px;
+    margin: 55px auto 18px;
+    font-size: 38px;
+  }
+
+  .upload h3 {
+    font-size: 23px;
+  }
+
+  .explain h3 {
+    font-size: 27px;
+  }
+
+  /* Description box */
+  #complaintDescription {
+    width: 100%;
+    min-height: 90px;
+  }
+
+  /* Map */
+  .map-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .bigmap {
+    height: 380px;
+  }
+
+  .mapstats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mapstats article {
+    padding: 15px;
+  }
+
+  .mapstats strong {
+    font-size: 26px;
+  }
+
+  /* Feed */
+  .feed article {
+    grid-template-columns: 55px 38px 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .feed article > div {
+    width: 38px;
+    height: 38px;
+  }
+
+  .feed h3 {
+    font-size: 14px;
+  }
+
+  .feed time {
+    display: none;
+  }
+
+  /* Steps */
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .steps article {
+    min-height: 160px;
+  }
+
+  .steps strong {
+    margin-top: 45px;
+  }
+
+  /* Closing section */
+  .closing {
+    min-height: 450px;
+    padding: 60px 18px;
+  }
+
+  .closing h2 {
+    font-size: clamp(45px, 13vw, 70px);
+  }
+
+  /* Footer */
+  main > footer {
+    padding: 20px 18px;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
