@@ -8,7 +8,7 @@
 const API_BASE_URL =
   window.NIGRANI_API_BASE_URL ||
   localStorage.getItem('NIGRANI_API_BASE_URL') ||
-  'https://nigrani-eg4p.onrender.com/api/reports/';
+  'https://nigrani-eg4p.onrender.com';
 
 let cameraStream = null;
 let capturedBlob = null;
