@@ -5,6 +5,13 @@
 //   POST /api/reports/send/
 //   GET  /api/reports/
 
+const map = L.map('dynamicMap').setView([28.5921, 77.0460], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+}).addTo(map);
+
 const API_BASE_URL =
   window.NIGRANI_API_BASE_URL ||
   localStorage.getItem('NIGRANI_API_BASE_URL') ||
