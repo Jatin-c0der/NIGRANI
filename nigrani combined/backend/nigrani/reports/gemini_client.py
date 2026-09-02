@@ -1,3 +1,4 @@
+import time
 import json
 from google import genai
 from google.genai import types
@@ -85,12 +86,26 @@ RESPONSE_SCHEMA = {
 def analyze_image(image_bytes, mime_type, description=None):
     image_part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
     prompt = build_prompt(description)
-    response = get_client().models.generate_content(
-        model="gemini-3.6-flash",
-        contents=[prompt, image_part],
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=RESPONSE_SCHEMA,
-        ),
-    )
-    return json.loads(response.text)
+
+    for attempt in range(3):
+        try:
+            response = get_client().models.generate_content(
+                model="gemini-3.6-flash",
+                contents=[prompt, image_part],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=RESPONSE_SCHEMA,
+                ),
+            )
+
+            return json.loads(response.text)
+
+        except Exception as e:
+            error_text = str(e)
+
+            if "503" in error_text or "UNAVAILABLE" in error_text:
+                if attempt < 2:
+                    time.sleep(2 ** attempt)
+                    continue
+
+            raise
