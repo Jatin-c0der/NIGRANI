@@ -4,6 +4,8 @@
 
 NIGRANI turns a single street photograph into structured safety intelligence. A citizen captures a photo of a hazard — exposed wiring, a blocked fire exit, unsafe scaffolding, an illegal extra floor — adds an optional description, and Google Gemini analyzes the image to identify violations, assess urgency, and draft a formal complaint letter. The report is then routed by email to the relevant authority (and CC'd to an NGO) and surfaced on a public Safety Map and Community Feed, with no personally identifying information attached.
 
+**Live demo:** [nigrani-1.onrender.com](https://nigrani-1.onrender.com/)
+
 > Anonymous by design. Built for civic action.
 
 ---
