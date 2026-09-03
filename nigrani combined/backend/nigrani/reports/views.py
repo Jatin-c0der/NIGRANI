@@ -98,18 +98,18 @@ class SendView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-       analysis, token_error = verify_analysis_token(data['analysis_token'], image_bytes)
-       if token_error:
-           return Response({'error': token_error}, status=status.HTTP_400_BAD_REQUEST)
+        analysis, token_error = verify_analysis_token(data['analysis_token'], image_bytes)
+        if token_error:
+            return Response({'error': token_error}, status=status.HTTP_400_BAD_REQUEST)
 
 # Do not create or email a report if no hazard was detected
-       if not analysis['violations']:
-           return Response(
-               {'error': 'No safety hazard was detected in the submitted photo.'},
-               status=status.HTTP_400_BAD_REQUEST
-           )
+        if not analysis['violations']:
+            return Response(
+                {'error': 'No safety hazard was detected in the submitted photo.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-       mime_type = image_file.content_type
+        mime_type = image_file.content_type
 
         report = Report(
             id=uuid.uuid4(),
