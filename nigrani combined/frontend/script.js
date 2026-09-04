@@ -167,6 +167,17 @@ async function analyzeCapturedPhoto() {
     lastAnalysisToken = data.analysis_token;
 
     const violationsText = formatViolations(data.violations);
+    const hasViolations = Array.isArray(data.violations) && data.violations.length > 0;
+
+    if (!hasViolations) {
+      setAnalysisState(`
+        <strong>No safety hazard detected</strong>
+        ${data.why_dangerous ? `<br>${escapeHTML(data.why_dangerous)}` : ''}
+      `);
+
+      toast('No safety hazard detected');
+      return;
+    }
 
     setAnalysisState(`
       <strong>${escapeHTML(data.urgency || 'Analyzed')}</strong>
@@ -177,9 +188,9 @@ async function analyzeCapturedPhoto() {
     `);
 
     document.querySelector('#submitReport')
-      ?.addEventListener('click', () => sendReport());
+    ?.addEventListener('click', () => sendReport());
 
-    toast('AI analysis complete');
+    toast('Safety hazard detected');
   } catch (error) {
     console.error(error);
     setAnalysisState(`<strong>Analysis failed:</strong> ${escapeHTML(error.message)}`);
