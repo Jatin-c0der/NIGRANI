@@ -1,90 +1,230 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NIGRANI — Civic Intelligence</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIGRANI — premium glimpse</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,450;1,9..144,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<style>
+  :root{
+    --ink:#0D0F14; --ink-panel:#15181F; --paper:#F5F3EE; --paper-dim:#AFB3BE;
+    --slate:#6E7A8A; --brass:#C9A15A; --line:rgba(245,243,238,.09); --line-strong:rgba(245,243,238,.18);
+    --serif:'Fraunces',Georgia,serif; --sans:'Work Sans',sans-serif;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:inherit;margin:0;padding:0}
+  html,body{height:100%;background:var(--ink);color:var(--paper)}
+  body{font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--brass);color:var(--ink)}
+  .wrap{padding:0 clamp(24px,6vw,90px)}
+
+  nav.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1.5rem clamp(24px,6vw,90px);mix-blend-mode:difference}
+  nav.top .mark{font-family:var(--serif);font-size:1.05rem}
+  nav.top .links{display:flex;gap:2.2rem;font-size:.85rem}
+  nav.top .links a{opacity:.7;transition:opacity .25s ease;position:relative}
+  nav.top .links a:hover{opacity:1}
+  nav.top .links a.soon::after{content:"soon";position:absolute;top:-10px;right:-22px;font-size:.55rem;color:var(--brass);letter-spacing:.05em}
+  @media(max-width:640px){nav.top .links{display:none}}
+
+  .hero{min-height:100vh;position:relative;display:flex;flex-direction:column;justify-content:center;padding-top:6rem}
+  #scene{position:absolute;inset:0;z-index:0;opacity:0}
+  .hero .inner{position:relative;z-index:1}
+  .kicker{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--slate);margin-bottom:1.8rem;overflow:hidden}
+  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--brass)}
+  h1{font-family:var(--serif);font-weight:450;font-size:clamp(2.6rem,7.5vw,5.6rem);line-height:1.05;letter-spacing:-.01em;max-width:18ch}
+  h1 .line{display:block;overflow:hidden}
+  h1 .line span{display:inline-block;transform:translateY(115%)}
+  h1 em{font-style:italic;color:var(--brass)}
+  .lede{max-width:46ch;color:var(--paper-dim);font-size:1.02rem;line-height:1.7;margin-top:2rem;opacity:0}
+  .cta-row{display:flex;gap:1rem;margin-top:2.6rem;opacity:0}
+  .btn{display:inline-flex;align-items:center;gap:.6rem;border:1px solid var(--line-strong);padding:.9rem 1.7rem;border-radius:999px;font-size:.9rem;transition:border-color .3s ease,background .3s ease,color .3s ease}
+  .btn:hover{border-color:var(--brass);background:rgba(201,161,90,.08);color:var(--brass)}
+  .btn.ghost{border-color:transparent;color:var(--paper-dim)}
+  .scroll-cue{position:absolute;bottom:2.4rem;left:clamp(24px,6vw,90px);font-size:.75rem;color:var(--slate);display:flex;align-items:center;gap:.6rem;opacity:0}
+  .scroll-cue i{width:1px;height:32px;background:var(--line-strong);position:relative;overflow:hidden}
+  .scroll-cue i::after{content:"";position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--brass);animation:cue 1.8s ease-in-out infinite}
+  @keyframes cue{50%{top:100%}100%{top:100%}}
+
+  section.next{min-height:100vh;padding:7rem clamp(24px,6vw,90px);border-top:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+  .next .label{color:var(--slate);font-size:.9rem;margin-bottom:1rem}
+  .next h2{font-family:var(--serif);font-weight:450;font-size:clamp(2rem,4.5vw,3.4rem);max-width:16ch;line-height:1.15}
+  .next h2 em{font-style:italic;color:var(--brass)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3.5rem}
+  .card{border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;padding:2rem;opacity:0;transform:translateY(40px)}
+  .card b{display:block;font-family:var(--serif);font-size:2rem;color:var(--brass);margin-bottom:.6rem}
+  .card p{color:var(--paper-dim);font-size:.92rem;line-height:1.6}
+  @media(max-width:800px){.cards{grid-template-columns:1fr}}
+  footer.note{padding:2rem clamp(24px,6vw,90px) 3rem;color:var(--slate);font-size:.78rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+  #pageTransition{position:fixed;inset:0;background:var(--ink);z-index:9999;opacity:1;transition:opacity .55s ease;pointer-events:none}
+</style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="loader-orbit a"></div><div class="loader-orbit b"></div>
-  <div class="loader-logo"><img src="nigrani-logo.png" alt="NIGRANI"></div>
-  <div class="loader-info"><b>NIGRANI</b><span>INITIALIZING CIVIC INTELLIGENCE</span><i><em></em></i></div>
-  <div class="loader-bottom"><span>DELHI NCR / LIVE NETWORK</span><strong id="percent">00</strong></div>
-</div>
-
-<aside>
-  <div class="brand"><img src="nigrani-logo.png" alt="NIGRANI logo"><span>NIGRANI</span></div>
-  <nav>
-    <a class="active" href="#home">⌂ &nbsp; Overview</a>
-    <a href="#report">＋ &nbsp; New report</a>
-    <a href="#map">◉ &nbsp; Safety map</a>
-    <a href="#feed">▣ &nbsp; My reports</a>
-    <a href="#process">✦ &nbsp; AI assistant</a>
-  </nav>
-  <div class="side-live">● &nbsp; <b>Safety pulse</b><small><span id="sideLiveCount">00</span> active reports</small></div>
-</aside>
-
-<main>
-<header><span>CIVIC INTELLIGENCE / OVERVIEW</span></header>
-
-<section id="home" class="hero">
-  <div class="copy">
-    <label>● LIVE CIVIC SAFETY NETWORK</label>
-    <h1>Notice what<br>others <em>miss.</em></h1>
-    <p>NIGRANI turns a simple street photograph into structured safety intelligence — then helps route it to the right place.</p>
-    <a class="btn" href="#report">Create report ↗</a>
-    <a class="ghost" href="#map">Explore map</a>
+<div class="page-transition" id="pageTransition"></div>
+<nav class="top">
+  <a href="index.html" class="mark">NIGRANI</a>
+  <div class="links">
+    <a href="report.html">Report</a>
+    <a href="map.html">Map</a>
+    <a href="feed.html">Feed</a>
   </div>
-  <div class="scene">
-    <div class="map3d">
-      <small>DELHI NCR　 <em>● LIVE</em></small>
-      <div class="grid"></div><span class="place p1">DWARKA</span><span class="place p2">ROHINI</span><span class="place p3">NOIDA</span>
-      <i class="pin x">!</i><i class="pin y">!</i><i class="pin z">!</i>
+</nav>
+
+<section class="hero" id="home">
+  <canvas id="scene"></canvas>
+  <div class="wrap inner">
+    <div class="kicker"><span class="dot"></span> Live civic safety network — Delhi NCR</div>
+    <h1>
+      <span class="line"><span>Notice what</span></span>
+      <span class="line"><span>others <em>miss.</em></span></span>
+    </h1>
+    <p class="lede">NIGRANI turns a simple street photograph into structured safety intelligence — then routes it to the people who can act on it.</p>
+    <div class="cta-row">
+      <a class="btn" href="report.html">Create a report ↗</a>
+      <a class="btn ghost" href="#next">See how it works</a>
     </div>
-    <div class="float one"><small>THIS WEEK</small><b>24</b><span>citizen reports</span></div>
-    <div class="float two"><small>NIGRANI AI</small><b>91%</b><span>successfully routed</span></div>
-    <div class="float three"><small>SAFETY SCORE</small><b>82<span>/100</span></b></div>
+  </div>
+  <div class="scroll-cue"><i></i> Scroll</div>
+</section>
+
+<section class="next" id="next">
+  <div class="label">01 / How it works</div>
+  <h2>One photo. <em>Three moves</em> after that.</h2>
+  <div class="cards">
+    <div class="card"><b>01</b><p>Capture a hazard with your camera — no forms, no categories to pick from.</p></div>
+    <div class="card"><b>02</b><p>NIGRANI reads the image and drafts a structured report automatically.</p></div>
+    <div class="card"><b>03</b><p>You approve it, and it's routed to the right civic authority.</p></div>
   </div>
 </section>
 
-<div class="stats"><article>ACTIVE REPORTS<strong id="overviewActiveReports">00</strong><small>live reports in NIGRANI</small></article><article>ROUTED<strong id="overviewRouted">00</strong><small>successfully sent</small></article><article class="dark">AI ANALYSIS<strong>READY</strong><small>Gemini-powered analysis</small></article><article class="lime">TOTAL REPORTS<strong id="overviewTotalReports">00</strong><small>stored in backend</small></article></div>
+<footer class="note">
+  <span>NIGRANI — civic safety intelligence</span>
+  <span>Glimpse build — Report / Map / Feed pages not wired yet</span>
+</footer>
 
-<section id="report">
-  <label>01 / REPORT</label><h2>Make a report<br><em>without the paperwork.</em></h2>
-  <div class="report-grid">
-    <div class="upload">
-      <small>NEW COMPLAINT　 01 / 03</small>
-      <div class="camera" id="cameraIcon">◉</div><h3>Capture a live photo</h3><p>Use your camera to capture a visible hazard. NIGRANI will do the heavy lifting.</p>
-      <video id="camera" autoplay playsinline muted hidden></video><canvas id="canvas" hidden></canvas><textarea id="complaintDescription" maxlength="500" placeholder="Describe the issue (optional)"></textarea><button class="btn" id="startCamera">Open camera ↗</button><button class="btn" id="capturePhoto" hidden>Capture photo ↗</button>
-      <footer>◉ Approximate location　 <button onclick="toast('Approximate location attached')">Detect</button></footer>
-    </div>
-    <div class="explain"><b>01</b><label>CAPTURE</label><h3>Start with what you can see.</h3><p>No categories to remember. No complicated forms. A photograph gives the system its first signal.</p><div>PHOTO　→　AI　→　ACTION</div></div>
-  </div>
-  <div id="preview"></div>
-</section>
+<script>
+// ---------- page transition ----------
+const pageTransition = document.getElementById('pageTransition');
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => { pageTransition.style.opacity = '0'; });
+});
+document.querySelectorAll('a[href$=".html"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const dest = link.getAttribute('href');
+    if (dest === location.pathname.split('/').pop()) return;
+    e.preventDefault();
+    pageTransition.style.pointerEvents = 'all';
+    pageTransition.style.opacity = '1';
+    setTimeout(() => { location.href = dest; }, 480);
+  });
+});
 
-<section id="map">
-  <label>02 / SAFETY MAP</label><h2>The city,<br><em>as a signal.</em></h2>
-  <div class="map-panel"><div class="bigmap" id="bigmap"><div id="dynamicMap"></div><span>DELHI NCR</span><div id="dynamicMapMarkers"></div></div><div class="mapstats"><article>CRITICAL<strong>08</strong><small>needs attention</small></article><article>HIGH<strong>11</strong><small>priority cases</small></article><article>MEDIUM<strong>05</strong><small>being monitored</small></article><article class="lime">ROUTING ENGINE<strong>ACTIVE</strong><small>Matched to relevant authority.</small></article></div></div>
-</section>
+// ---------- Lenis smooth scroll ----------
+try{
+  const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time)=>{ lenis.raf(time*1000); });
+  gsap.ticker.lagSmoothing(0);
+}catch(e){ console.warn('Lenis unavailable', e); }
 
-<section id="feed">
-  <label>03 / COMMUNITY FEED</label><h2>What needs<br><em>attention.</em></h2>
-  <div class="feed" id="communityFeed">
-    <article><b>LOADING</b><div>…</div><section><h3>Loading live reports</h3><small>Connecting to NIGRANI network…</small></section><time>NOW</time></article>
-  </div>
-</section>
+gsap.registerPlugin(ScrollTrigger);
 
-<section id="process"><label>04 / AI ASSISTANT</label><h2>One signal.<br><em>Four simple moves.</em></h2><div class="steps"><article>01<strong>CAPTURE</strong><small>Photograph the hazard.</small></article><article>02<strong>UNDERSTAND</strong><small>AI identifies visible risks.</small></article><article>03<strong>REVIEW</strong><small>You approve the complaint.</small></article><article>04<strong>ROUTE</strong><small>The right authority receives it.</small></article></div></section>
+// ---------- hero text + UI entrance ----------
+const tl = gsap.timeline({ defaults:{ ease:'power4.out' } });
+tl.to('.kicker', { opacity:1, duration:.8 })
+  .to('h1 .line span', { y:'0%', duration:1.1, stagger:.12 }, '-=.4')
+  .to('.lede', { opacity:1, duration:.9 }, '-=.5')
+  .to('.cta-row', { opacity:1, duration:.9 }, '-=.6')
+  .to('.scroll-cue', { opacity:1, duration:.6 }, '-=.4')
+  .to('#scene', { opacity:1, duration:1.4 }, '-=1.6');
 
-<section class="closing"><label>NIGRANI / CIVIC SAFETY INTELLIGENCE</label><h2>A safer city<br>starts with <em>noticing.</em></h2><a class="btn" href="#report">Report a hazard ↗</a></section>
-<footer>NIGRANI <span>Anonymous by design.</span><span>Built for civic action.</span></footer>
-</main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js"></script>
-</body></html>
+gsap.utils.toArray('.card').forEach((card,i)=>{
+  gsap.to(card, {
+    opacity:1, y:0, duration:.9, ease:'power3.out', delay:i*.1,
+    scrollTrigger:{ trigger:card, start:'top 85%' }
+  });
+});
+gsap.to('.next h2, .next .label', {
+  opacity:1, duration:.9,
+  scrollTrigger:{ trigger:'.next', start:'top 75%' }
+});
+
+// ---------- Three.js hero scene: a tilted point-grid "map" with pins ----------
+(function(){
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, .1, 100);
+  camera.position.set(0, 4.2, 7.5);
+  camera.lookAt(0,0,0);
+
+  const group = new THREE.Group();
+  group.rotation.x = -0.55;
+  scene.add(group);
+
+  // grid of points ("the map")
+  const gridSize = 34, spacing = 0.34;
+  const gPositions = [];
+  for(let i=0;i<gridSize;i++){
+    for(let j=0;j<gridSize;j++){
+      gPositions.push((i-gridSize/2)*spacing, 0, (j-gridSize/2)*spacing);
+    }
+  }
+  const gGeo = new THREE.BufferGeometry();
+  gGeo.setAttribute('position', new THREE.Float32BufferAttribute(gPositions,3));
+  const gMat = new THREE.PointsMaterial({ color:0x6E7A8A, size:0.02, transparent:true, opacity:0.5 });
+  group.add(new THREE.Points(gGeo, gMat));
+
+  // brass "hazard" pins at a few points
+  const pinGeo = new THREE.SphereGeometry(0.075, 16, 16);
+  const pinMat = new THREE.MeshBasicMaterial({ color:0xC9A15A });
+  const pinSpots = [[-2.2,0,-1.4],[1.6,0,0.6],[0.3,0,-2.4],[-0.8,0,1.9]];
+  pinSpots.forEach(([x,y,z])=>{
+    const pin = new THREE.Mesh(pinGeo, pinMat);
+    pin.position.set(x, 0.05, z);
+    group.add(pin);
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(0.11,0.14,32),
+      new THREE.MeshBasicMaterial({ color:0xC9A15A, transparent:true, opacity:0.5, side:THREE.DoubleSide })
+    );
+    ring.position.set(x,0.051,z);
+    ring.rotation.x = -Math.PI/2;
+    group.add(ring);
+  });
+
+  function resize(){
+    const w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let mx=0,my=0;
+  window.addEventListener('pointermove',(e)=>{
+    mx = (e.clientX/innerWidth - .5);
+    my = (e.clientY/innerHeight - .5);
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    group.rotation.z += (mx*0.35 - group.rotation.z*0.35) * 0.04;
+    group.position.y += ((my*-0.4) - group.position.y) * 0.04;
+    group.rotation.y += 0.0009;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
