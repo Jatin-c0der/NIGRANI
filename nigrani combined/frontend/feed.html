@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIGRANI — Community feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,450;1,9..144,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<style>
+  :root{
+    --ink:#0D0F14; --ink-panel:#15181F; --paper:#F5F3EE; --paper-dim:#AFB3BE;
+    --slate:#6E7A8A; --brass:#C9A15A; --line:rgba(245,243,238,.09); --line-strong:rgba(245,243,238,.18);
+    --critical:#D97D6C; --high:#D8A65C; --medium:#C9BE7A;
+    --serif:'Fraunces',Georgia,serif; --sans:'Work Sans',sans-serif;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:inherit;margin:0;padding:0}
+  html,body{height:100%;background:var(--ink);color:var(--paper)}
+  body{font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--brass);color:var(--ink)}
+
+  nav.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1.5rem clamp(24px,6vw,90px);mix-blend-mode:difference}
+  nav.top .mark{font-family:var(--serif);font-size:1.05rem}
+  nav.top .links{display:flex;gap:2.2rem;font-size:.85rem}
+  nav.top .links a{opacity:.55;transition:opacity .25s ease;position:relative}
+  nav.top .links a.active{opacity:1;color:var(--brass)}
+  nav.top .links a.soon::after{content:"soon";position:absolute;top:-10px;right:-22px;font-size:.55rem;color:var(--brass);letter-spacing:.05em}
+  @media(max-width:640px){nav.top .links{display:none}}
+
+  main{padding:9rem clamp(24px,6vw,90px) 6rem;max-width:920px;margin:0 auto}
+  .label{color:var(--slate);font-size:.9rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;opacity:0}
+  .label button{background:none;border:1px solid var(--line-strong);color:var(--paper-dim);border-radius:999px;padding:.5rem 1rem;font:400 .78rem var(--sans);cursor:pointer;transition:.25s ease}
+  .label button:hover{border-color:var(--brass);color:var(--brass)}
+  h1{font-family:var(--serif);font-weight:450;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.1;margin:1rem 0 3rem;opacity:0;transform:translateY(24px)}
+  h1 em{font-style:italic;color:var(--brass)}
+
+  #communityFeed{display:grid;gap:.7rem}
+  .feed-empty{padding:2rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;color:var(--slate);font-size:.85rem;text-align:center}
+  #communityFeed article{display:grid;grid-template-columns:88px 46px 1fr 64px;align-items:center;gap:1.1rem;padding:1.1rem 1.3rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;opacity:0;transform:translateY(16px)}
+  #communityFeed article>b{font:500 .68rem var(--sans);letter-spacing:.02em;padding:.4rem .5rem;border-radius:5px;text-align:center}
+  #communityFeed article.sev-critical>b{color:var(--critical);background:rgba(217,125,108,.12)}
+  #communityFeed article.sev-high>b{color:var(--high);background:rgba(216,166,92,.12)}
+  #communityFeed article.sev-medium>b{color:var(--medium);background:rgba(201,190,122,.12)}
+  #communityFeed article>div.icon{width:40px;height:40px;border-radius:50%;background:var(--ink);display:grid;place-items:center;color:var(--brass);font-size:1rem}
+  #communityFeed h3{margin:0;font:450 1rem var(--serif);font-weight:450}
+  #communityFeed small{color:var(--slate);font-size:.76rem;font-weight:300}
+  #communityFeed time{color:var(--slate);font-size:.72rem;text-align:right;font-weight:300}
+  @media(max-width:600px){
+    #communityFeed article{grid-template-columns:56px 38px 1fr;gap:.6rem}
+    #communityFeed time{display:none}
+  }
+
+  #pageTransition{position:fixed;inset:0;background:var(--ink);z-index:9999;opacity:1;transition:opacity .55s ease;pointer-events:none}
+
+  .skel-line{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+  @keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+  .skel-card{display:grid;grid-template-columns:88px 46px 1fr 64px;align-items:center;gap:1.1rem;padding:1.1rem 1.3rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px}
+  .skel-card .skel-chip{height:18px;border-radius:5px;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+  .skel-card .skel-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+  @media(max-width:600px){.skel-card{grid-template-columns:56px 38px 1fr}}
+</style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<nav class="top">
+  <a href="index.html" class="mark">NIGRANI</a>
+  <div class="links">
+    <a href="report.html">Report</a>
+    <a href="map.html">Map</a>
+    <a href="feed.html" class="active">Feed</a>
+  </div>
+</nav>
+
+<main>
+  <div class="label">
+    <span>02 / Community feed</span>
+    <button id="refreshFeed">Refresh ↻</button>
+  </div>
+  <h1>What needs<br><em>attention.</em></h1>
+  <div id="communityFeed">
+    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:60%;margin-bottom:.5rem"></div><div class="skel-line" style="width:35%"></div></div><div class="skel-line" style="width:80%"></div></div>
+    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:70%;margin-bottom:.5rem"></div><div class="skel-line" style="width:40%"></div></div><div class="skel-line" style="width:80%"></div></div>
+    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:50%;margin-bottom:.5rem"></div><div class="skel-line" style="width:30%"></div></div><div class="skel-line" style="width:80%"></div></div>
+  </div>
+</main>
+
+<script>
+gsap.timeline({ defaults:{ ease:'power3.out' } })
+  .to('.label', { opacity:1, duration:.7 })
+  .to('h1', { opacity:1, y:0, duration:1 }, '-=.3');
+
+try{
+  const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+  function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+}catch(e){}
+
+const pageTransition = document.getElementById('pageTransition');
+window.addEventListener('load', () => { requestAnimationFrame(() => { pageTransition.style.opacity = '0'; }); });
+document.querySelectorAll('a[href$=".html"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const dest = link.getAttribute('href');
+    if (dest === location.pathname.split('/').pop()) return;
+    e.preventDefault();
+    pageTransition.style.pointerEvents = 'all';
+    pageTransition.style.opacity = '1';
+    setTimeout(() => { location.href = dest; }, 480);
+  });
+});
+</script>
+
+<script>
+// ---------- Unmodified NIGRANI feed logic (GET /api/reports/) ----------
+// Backend endpoint, auth and rate limiting are entirely server-side and untouched here.
+const API_BASE_URL =
+  window.NIGRANI_API_BASE_URL ||
+  localStorage.getItem('NIGRANI_API_BASE_URL') ||
+  'https://nigrani-eg4p.onrender.com/api/reports';
+
+async function loadLiveReports() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    });
+    const data = await parseJSON(response);
+    if (!response.ok) throw new Error(data.error || `Reports failed (${response.status})`);
+
+    const reports = Array.isArray(data) ? data : (Array.isArray(data.results) ? data.results : []);
+    renderFeed(reports);
+  } catch (error) {
+    console.warn('Live reports unavailable:', error.message);
+    document.querySelector('#communityFeed').innerHTML =
+      '<div class="feed-empty">Backend is offline or unreachable. Start Django to load live reports.</div>';
+  }
+}
+
+function normalizeSeverity(report) {
+  const raw = String(report.urgency || 'Medium').toLowerCase();
+  if (raw === 'critical') return 'critical';
+  if (raw === 'high') return 'high';
+  return 'medium';
+}
+
+function reportTitle(report) {
+  if (Array.isArray(report.violations) && report.violations.length) {
+    const first = report.violations[0];
+    if (first?.category && first?.detail) return `${first.category}: ${first.detail}`;
+    if (first?.detail) return first.detail;
+    if (first?.category) return first.category;
+  }
+  if (report.complaint_draft) return report.complaint_draft;
+  return 'Civic safety report';
+}
+
+function reportLocation(report) {
+  const lat = Number(report.latitude);
+  const lon = Number(report.longitude);
+  if (Number.isFinite(lat) && Number.isFinite(lon)) return `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+  return 'Location not provided';
+}
+
+function reportTime(report) {
+  if (!report.created_at) return 'LIVE';
+  const d = new Date(report.created_at);
+  if (Number.isNaN(d.getTime())) return 'LIVE';
+  const mins = Math.max(0, Math.floor((Date.now() - d.getTime()) / 60000));
+  if (mins < 1) return 'NOW';
+  if (mins < 60) return `${mins} MIN`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} HR`;
+  return `${Math.floor(hours / 24)} DAY`;
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[ch]));
+}
+
+function renderFeed(reports) {
+  const feed = document.querySelector('#communityFeed');
+  if (!reports.length) {
+    feed.innerHTML = '<div class="feed-empty">No live reports yet. New citizen complaints will appear here.</div>';
+    return;
+  }
+
+  feed.innerHTML = reports.slice(0, 20).map(report => {
+    const severity = normalizeSeverity(report);
+    const icon = severity === 'critical' ? '⚡' : severity === 'high' ? '▣' : '⌁';
+    return `
+      <article class="sev-${severity}">
+        <b>${severity.toUpperCase()}</b>
+        <div class="icon">${icon}</div>
+        <section>
+          <h3>${escapeHTML(reportTitle(report))}</h3>
+          <small>${escapeHTML(reportLocation(report))}</small>
+        </section>
+        <time>${reportTime(report)}</time>
+      </article>
+    `;
+  }).join('');
+
+  gsap.to('#communityFeed article', { opacity:1, y:0, duration:.7, stagger:.06, ease:'power3.out' });
+}
+
+async function parseJSON(response) {
+  const text = await response.text();
+  try { return text ? JSON.parse(text) : {}; } catch { return { error: `Server returned HTTP ${response.status}` }; }
+}
+
+document.querySelector('#refreshFeed').addEventListener('click', loadLiveReports);
+loadLiveReports();
+</script>
+</body>
+</html>
