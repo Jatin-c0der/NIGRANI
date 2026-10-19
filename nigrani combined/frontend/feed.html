@@ -1,219 +1,822 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NIGRANI — Community feed</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,450;1,9..144,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<style>
-  :root{
-    --ink:#0D0F14; --ink-panel:#15181F; --paper:#F5F3EE; --paper-dim:#AFB3BE;
-    --slate:#6E7A8A; --brass:#C9A15A; --line:rgba(245,243,238,.09); --line-strong:rgba(245,243,238,.18);
-    --critical:#D97D6C; --high:#D8A65C; --medium:#C9BE7A;
-    --serif:'Fraunces',Georgia,serif; --sans:'Work Sans',sans-serif;
-    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  *{box-sizing:inherit;margin:0;padding:0}
-  html,body{height:100%;background:var(--ink);color:var(--paper)}
-  body{font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-  a{color:inherit;text-decoration:none}
-  ::selection{background:var(--brass);color:var(--ink)}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Browse community safety reports submitted through NIGRANI.">
 
-  nav.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1.5rem clamp(24px,6vw,90px);mix-blend-mode:difference}
-  nav.top .mark{font-family:var(--serif);font-size:1.05rem}
-  nav.top .links{display:flex;gap:2.2rem;font-size:.85rem}
-  nav.top .links a{opacity:.55;transition:opacity .25s ease;position:relative}
-  nav.top .links a.active{opacity:1;color:var(--brass)}
-  nav.top .links a.soon::after{content:"soon";position:absolute;top:-10px;right:-22px;font-size:.55rem;color:var(--brass);letter-spacing:.05em}
-  @media(max-width:640px){nav.top .links{display:none}}
+  <title>Public Feed — NIGRANI</title>
 
-  main{padding:9rem clamp(24px,6vw,90px) 6rem;max-width:920px;margin:0 auto}
-  .label{color:var(--slate);font-size:.9rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;opacity:0}
-  .label button{background:none;border:1px solid var(--line-strong);color:var(--paper-dim);border-radius:999px;padding:.5rem 1rem;font:400 .78rem var(--sans);cursor:pointer;transition:.25s ease}
-  .label button:hover{border-color:var(--brass);color:var(--brass)}
-  h1{font-family:var(--serif);font-weight:450;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.1;margin:1rem 0 3rem;opacity:0;transform:translateY(24px)}
-  h1 em{font-style:italic;color:var(--brass)}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  #communityFeed{display:grid;gap:.7rem}
-  .feed-empty{padding:2rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;color:var(--slate);font-size:.85rem;text-align:center}
-  #communityFeed article{display:grid;grid-template-columns:88px 46px 1fr 64px;align-items:center;gap:1.1rem;padding:1.1rem 1.3rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;opacity:0;transform:translateY(16px)}
-  #communityFeed article>b{font:500 .68rem var(--sans);letter-spacing:.02em;padding:.4rem .5rem;border-radius:5px;text-align:center}
-  #communityFeed article.sev-critical>b{color:var(--critical);background:rgba(217,125,108,.12)}
-  #communityFeed article.sev-high>b{color:var(--high);background:rgba(216,166,92,.12)}
-  #communityFeed article.sev-medium>b{color:var(--medium);background:rgba(201,190,122,.12)}
-  #communityFeed article>div.icon{width:40px;height:40px;border-radius:50%;background:var(--ink);display:grid;place-items:center;color:var(--brass);font-size:1rem}
-  #communityFeed h3{margin:0;font:450 1rem var(--serif);font-weight:450}
-  #communityFeed small{color:var(--slate);font-size:.76rem;font-weight:300}
-  #communityFeed time{color:var(--slate);font-size:.72rem;text-align:right;font-weight:300}
-  @media(max-width:600px){
-    #communityFeed article{grid-template-columns:56px 38px 1fr;gap:.6rem}
-    #communityFeed time{display:none}
-  }
+  <style>
+    :root {
+      --lime: #B7FF42;
+      --lime-soft: #efffd7;
+      --ink: #151713;
+      --muted: #6b7065;
+      --line: #e6e9e1;
+      --paper: #ffffff;
+      --wash: #f8f9f6;
+      --red: #c8423c;
+      --orange: #a9650a;
+      --green: #4c7e36;
+      --sans: "DM Sans", system-ui, sans-serif;
+      --display: "Space Grotesk", system-ui, sans-serif;
+    }
 
-  #pageTransition{position:fixed;inset:0;background:var(--ink);z-index:9999;opacity:1;transition:opacity .55s ease;pointer-events:none}
+    * {
+      box-sizing: border-box;
+    }
 
-  .skel-line{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
-  @keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
-  .skel-card{display:grid;grid-template-columns:88px 46px 1fr 64px;align-items:center;gap:1.1rem;padding:1.1rem 1.3rem;border:1px solid var(--line);background:var(--ink-panel);border-radius:10px}
-  .skel-card .skel-chip{height:18px;border-radius:5px;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
-  .skel-card .skel-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(90deg,var(--line) 25%,var(--line-strong) 37%,var(--line) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
-  @media(max-width:600px){.skel-card{grid-template-columns:56px 38px 1fr}}
-</style>
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #86c925;
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1050px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+
+    .topbar {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font: 700 16px var(--display);
+      letter-spacing: -0.4px;
+    }
+
+    .brand-mark {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--lime);
+      font: 700 16px var(--display);
+    }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 23px;
+      color: #50554b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .navlinks a:hover,
+    .navlinks a.active {
+      color: #111;
+    }
+
+    .navlinks a.active {
+      font-weight: 700;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 15px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: white !important;
+    }
+
+    .nav-cta:hover {
+      background: #30352b;
+    }
+
+    /* Page heading */
+
+    main {
+      padding: 43px 0 65px;
+    }
+
+    .eyebrow {
+      color: #64734e;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font: 600 clamp(32px, 4vw, 43px)/1.12 var(--display);
+      letter-spacing: -1.5px;
+    }
+
+    .intro {
+      max-width: 570px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    /* Toolbar */
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 28px 0 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .feed-count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .refresh-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 37px;
+      padding: 0 13px;
+      border: 1px solid #dfe2d9;
+      border-radius: 9px;
+      background: white;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .refresh-button:hover {
+      background: var(--wash);
+    }
+
+    .refresh-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    /* Report cards */
+
+    .feed-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .report-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      padding: 19px 20px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      transition: border-color 0.15s ease;
+    }
+
+    .report-card:hover {
+      border-color: #cbd0c2;
+    }
+
+    .report-content {
+      min-width: 0;
+    }
+
+    .report-labels {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .severity {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .severity::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .severity.high {
+      background: #fff0ef;
+      color: var(--red);
+    }
+
+    .severity.medium {
+      background: #fff5e6;
+      color: var(--orange);
+    }
+
+    .severity.low {
+      background: #eef7e8;
+      color: var(--green);
+    }
+
+    .report-reference {
+      color: #858a80;
+      font-size: 10px;
+    }
+
+    .report-title {
+      margin: 0;
+      font: 600 16px/1.45 var(--display);
+      letter-spacing: -0.25px;
+      overflow-wrap: anywhere;
+    }
+
+    .report-description {
+      margin: 6px 0 0;
+      color: #62675d;
+      font-size: 12px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .report-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 12px;
+      color: #777d71;
+      font-size: 10px;
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .meta-dot {
+      width: 5px;
+      height: 5px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #a4aa9c;
+    }
+
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      min-height: 35px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .map-link:hover {
+      border-color: var(--lime);
+      background: var(--lime);
+    }
+
+    /* Loading, empty and error states */
+
+    .state {
+      padding: 32px 20px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--wash);
+      text-align: center;
+    }
+
+    .state-symbol {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 12px;
+      border-radius: 10px;
+      background: var(--lime);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .state h2 {
+      margin: 0 0 7px;
+      font: 600 17px var(--display);
+      letter-spacing: -0.3px;
+    }
+
+    .state p {
+      max-width: 410px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .state .refresh-button {
+      margin-top: 15px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 23px 0 28px;
+      border-top: 1px solid var(--line);
+      color: #777d71;
+      font-size: 10px;
+    }
+
+    footer nav {
+      display: flex;
+      gap: 17px;
+    }
+
+    footer a:hover {
+      color: var(--ink);
+    }
+
+    /* Mobile */
+
+    @media (max-width: 600px) {
+      .shell {
+        width: calc(100% - 28px);
+      }
+
+      .topbar {
+        min-height: 64px;
+      }
+
+      .brand {
+        font-size: 15px;
+      }
+
+      .navlinks {
+        gap: 13px;
+        font-size: 11px;
+      }
+
+      .navlinks a:not(.nav-cta):not(.active) {
+        display: none;
+      }
+
+      .nav-cta {
+        min-height: 35px;
+        padding: 0 11px;
+        font-size: 11px;
+      }
+
+      main {
+        padding: 32px 0 45px;
+      }
+
+      h1 {
+        font-size: 34px;
+        letter-spacing: -1.1px;
+      }
+
+      .intro {
+        font-size: 12px;
+      }
+
+      .toolbar {
+        margin-top: 22px;
+      }
+
+      .report-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+        padding: 15px;
+      }
+
+      .report-title {
+        font-size: 15px;
+      }
+
+      .report-meta {
+        gap: 8px 12px;
+      }
+
+      .map-link {
+        justify-self: start;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="NIGRANI home">
+        <span class="brand-mark">N</span>
+        <span>NIGRANI</span>
+      </a>
 
-<div class="page-transition" id="pageTransition"></div>
-<nav class="top">
-  <a href="index.html" class="mark">NIGRANI</a>
-  <div class="links">
-    <a href="report.html">Report</a>
-    <a href="map.html">Map</a>
-    <a href="feed.html" class="active">Feed</a>
+      <nav class="navlinks" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="report.html">Report</a>
+        <a href="map.html">Map</a>
+        <a class="active" href="feed.html">Public feed</a>
+        <a class="nav-cta" href="report.html">＋ Report</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="eyebrow">Community reports</div>
+      <h1>Public safety reports</h1>
+      <p class="intro">
+        See the reports submitted through NIGRANI. Report details and locations
+        depend on the information available from the backend.
+      </p>
+
+      <div class="toolbar">
+        <div class="feed-count" id="feedCount" aria-live="polite">
+          Loading reports…
+        </div>
+
+        <div class="toolbar-right">
+          <button class="refresh-button" id="refreshFeed" type="button">
+            ↻ Refresh
+          </button>
+        </div>
+      </div>
+
+      <section class="feed-list" id="communityFeed" aria-live="polite">
+        <div class="state">
+          <div class="state-symbol">↻</div>
+          <h2>Loading reports</h2>
+          <p>Getting the latest community reports from the server.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© <span id="year"></span> NIGRANI · Civic safety</span>
+      <nav aria-label="Footer navigation">
+        <a href="report.html">Report</a>
+        <a href="map.html">Map</a>
+        <a href="feed.html">Public feed</a>
+      </nav>
+    </footer>
   </div>
-</nav>
 
-<main>
-  <div class="label">
-    <span>02 / Community feed</span>
-    <button id="refreshFeed">Refresh ↻</button>
-  </div>
-  <h1>What needs<br><em>attention.</em></h1>
-  <div id="communityFeed">
-    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:60%;margin-bottom:.5rem"></div><div class="skel-line" style="width:35%"></div></div><div class="skel-line" style="width:80%"></div></div>
-    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:70%;margin-bottom:.5rem"></div><div class="skel-line" style="width:40%"></div></div><div class="skel-line" style="width:80%"></div></div>
-    <div class="skel-card"><div class="skel-chip"></div><div class="skel-icon"></div><div><div class="skel-line" style="width:50%;margin-bottom:.5rem"></div><div class="skel-line" style="width:30%"></div></div><div class="skel-line" style="width:80%"></div></div>
-  </div>
-</main>
+  <script>
+    (() => {
+      const API_BASE_URL =
+        window.NIGRANI_API_BASE_URL ||
+        localStorage.getItem("NIGRANI_API_BASE_URL") ||
+        "https://nigrani-eg4p.onrender.com/api/reports";
 
-<script>
-gsap.timeline({ defaults:{ ease:'power3.out' } })
-  .to('.label', { opacity:1, duration:.7 })
-  .to('h1', { opacity:1, y:0, duration:1 }, '-=.3');
+      const feed = document.getElementById("communityFeed");
+      const count = document.getElementById("feedCount");
+      const refreshButton = document.getElementById("refreshFeed");
 
-try{
-  const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-  function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
-}catch(e){}
+      document.getElementById("year").textContent = new Date().getFullYear();
 
-const pageTransition = document.getElementById('pageTransition');
-window.addEventListener('load', () => { requestAnimationFrame(() => { pageTransition.style.opacity = '0'; }); });
-document.querySelectorAll('a[href$=".html"]').forEach(link => {
-  link.addEventListener('click', e => {
-    const dest = link.getAttribute('href');
-    if (dest === location.pathname.split('/').pop()) return;
-    e.preventDefault();
-    pageTransition.style.pointerEvents = 'all';
-    pageTransition.style.opacity = '1';
-    setTimeout(() => { location.href = dest; }, 480);
-  });
-});
-</script>
+      const safeText = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[char]);
 
-<script>
-// ---------- Unmodified NIGRANI feed logic (GET /api/reports/) ----------
-// Backend endpoint, auth and rate limiting are entirely server-side and untouched here.
-const API_BASE_URL =
-  window.NIGRANI_API_BASE_URL ||
-  localStorage.getItem('NIGRANI_API_BASE_URL') ||
-  'https://nigrani-eg4p.onrender.com/api/reports';
+      function pick(object, keys) {
+        for (const key of keys) {
+          if (
+            object &&
+            object[key] !== undefined &&
+            object[key] !== null &&
+            object[key] !== ""
+          ) {
+            return object[key];
+          }
+        }
+        return null;
+      }
 
-async function loadLiveReports() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/`, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      cache: 'no-store'
-    });
-    const data = await parseJSON(response);
-    if (!response.ok) throw new Error(data.error || `Reports failed (${response.status})`);
+      function urgencyOf(report) {
+        const value = String(
+          pick(report, ["urgency", "severity", "priority", "risk_level", "level"]) || ""
+        ).toLowerCase();
 
-    const reports = Array.isArray(data) ? data : (Array.isArray(data.results) ? data.results : []);
-    renderFeed(reports);
-  } catch (error) {
-    console.warn('Live reports unavailable:', error.message);
-    document.querySelector('#communityFeed').innerHTML =
-      '<div class="feed-empty">Backend is offline or unreachable. Start Django to load live reports.</div>';
-  }
-}
+        if (
+          value.includes("critical") ||
+          value.includes("high") ||
+          value.includes("severe")
+        ) {
+          return "high";
+        }
 
-function normalizeSeverity(report) {
-  const raw = String(report.urgency || 'Medium').toLowerCase();
-  if (raw === 'critical') return 'critical';
-  if (raw === 'high') return 'high';
-  return 'medium';
-}
+        if (value.includes("medium") || value.includes("moderate")) {
+          return "medium";
+        }
 
-function reportTitle(report) {
-  if (Array.isArray(report.violations) && report.violations.length) {
-    const first = report.violations[0];
-    if (first?.category && first?.detail) return `${first.category}: ${first.detail}`;
-    if (first?.detail) return first.detail;
-    if (first?.category) return first.category;
-  }
-  if (report.complaint_draft) return report.complaint_draft;
-  return 'Civic safety report';
-}
+        return "low";
+      }
 
-function reportLocation(report) {
-  const lat = Number(report.latitude);
-  const lon = Number(report.longitude);
-  if (Number.isFinite(lat) && Number.isFinite(lon)) return `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-  return 'Location not provided';
-}
+      function titleOf(report) {
+        const violations = pick(report, [
+          "violations",
+          "hazards",
+          "detected_violations"
+        ]);
 
-function reportTime(report) {
-  if (!report.created_at) return 'LIVE';
-  const d = new Date(report.created_at);
-  if (Number.isNaN(d.getTime())) return 'LIVE';
-  const mins = Math.max(0, Math.floor((Date.now() - d.getTime()) / 60000));
-  if (mins < 1) return 'NOW';
-  if (mins < 60) return `${mins} MIN`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} HR`;
-  return `${Math.floor(hours / 24)} DAY`;
-}
+        if (Array.isArray(violations) && violations.length) {
+          const first = violations[0];
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[ch]));
-}
+          if (typeof first === "string") {
+            return first;
+          }
 
-function renderFeed(reports) {
-  const feed = document.querySelector('#communityFeed');
-  if (!reports.length) {
-    feed.innerHTML = '<div class="feed-empty">No live reports yet. New citizen complaints will appear here.</div>';
-    return;
-  }
+          return pick(first, [
+            "title",
+            "name",
+            "type",
+            "description"
+          ]) || "Community safety report";
+        }
 
-  feed.innerHTML = reports.slice(0, 20).map(report => {
-    const severity = normalizeSeverity(report);
-    const icon = severity === 'critical' ? '⚡' : severity === 'high' ? '▣' : '⌁';
-    return `
-      <article class="sev-${severity}">
-        <b>${severity.toUpperCase()}</b>
-        <div class="icon">${icon}</div>
-        <section>
-          <h3>${escapeHTML(reportTitle(report))}</h3>
-          <small>${escapeHTML(reportLocation(report))}</small>
-        </section>
-        <time>${reportTime(report)}</time>
-      </article>
-    `;
-  }).join('');
+        return pick(report, [
+          "title",
+          "complaint_draft",
+          "description",
+          "message"
+        ]) || "Community safety report";
+      }
 
-  gsap.to('#communityFeed article', { opacity:1, y:0, duration:.7, stagger:.06, ease:'power3.out' });
-}
+      function descriptionOf(report) {
+        const description = pick(report, [
+          "summary",
+          "explanation",
+          "details",
+          "description",
+          "message"
+        ]);
 
-async function parseJSON(response) {
-  const text = await response.text();
-  try { return text ? JSON.parse(text) : {}; } catch { return { error: `Server returned HTTP ${response.status}` }; }
-}
+        if (!description || String(description) === String(titleOf(report))) {
+          return "";
+        }
 
-document.querySelector('#refreshFeed').addEventListener('click', loadLiveReports);
-loadLiveReports();
-</script>
+        return String(description);
+      }
+
+      function formatDate(value) {
+        if (!value) return "Date unavailable";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return String(value);
+        }
+
+        return date.toLocaleString([], {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function coordinatesOf(report) {
+        const latitude = pick(report, ["latitude", "lat"]);
+        const longitude = pick(report, ["longitude", "lng", "lon", "long"]);
+
+        if (latitude === null || longitude === null) {
+          return null;
+        }
+
+        const lat = Number(latitude);
+        const lng = Number(longitude);
+
+        if (
+          !Number.isFinite(lat) ||
+          !Number.isFinite(lng) ||
+          Math.abs(lat) > 90 ||
+          Math.abs(lng) > 180
+        ) {
+          return null;
+        }
+
+        return [lat, lng];
+      }
+
+      function showState(title, message, symbol = "!") {
+        feed.innerHTML = `
+          <div class="state">
+            <div class="state-symbol">${safeText(symbol)}</div>
+            <h2>${safeText(title)}</h2>
+            <p>${safeText(message)}</p>
+            <button class="refresh-button" id="retryFeed" type="button">
+              Try again
+            </button>
+          </div>
+        `;
+
+        document.getElementById("retryFeed").addEventListener("click", loadFeed);
+      }
+
+      function renderReports(reports) {
+        count.textContent =
+          `${reports.length} report${reports.length === 1 ? "" : "s"}`;
+
+        if (!reports.length) {
+          feed.innerHTML = `
+            <div class="state">
+              <div class="state-symbol">✓</div>
+              <h2>No reports yet</h2>
+              <p>
+                There are no submitted reports to display right now.
+                If you notice a safety concern, you can create a report.
+              </p>
+              <a class="refresh-button" href="report.html">Create a report ↗</a>
+            </div>
+          `;
+          return;
+        }
+
+        feed.innerHTML = reports.slice(0, 50).map((report, index) => {
+          const urgency = urgencyOf(report);
+          const title = titleOf(report);
+          const description = descriptionOf(report);
+
+          const reportId = pick(report, ["id", "report_id", "reference"]);
+          const date = pick(report, [
+            "created_at",
+            "timestamp",
+            "date",
+            "reported_at"
+          ]);
+
+          const coords = coordinatesOf(report);
+
+          const location =
+            pick(report, ["location", "address", "area", "place"]) ||
+            (coords
+              ? `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`
+              : "Location unavailable");
+
+          const mapLink = coords
+            ? `<a class="map-link" href="map.html?lat=${encodeURIComponent(coords[0])}&lng=${encodeURIComponent(coords[1])}">View map ↗</a>`
+            : "";
+
+          const severityLabel = urgency === "high"
+            ? "Critical / High"
+            : urgency === "medium"
+              ? "Medium"
+              : "Low / Other";
+
+          return `
+            <article class="report-card">
+              <div class="report-content">
+                <div class="report-labels">
+                  <span class="severity ${urgency}">${severityLabel}</span>
+                  <span class="report-reference">
+                    ${reportId !== null
+                      ? `Report #${safeText(reportId)}`
+                      : `Report ${index + 1}`}
+                  </span>
+                </div>
+
+                <h2 class="report-title">${safeText(title)}</h2>
+
+                ${description
+                  ? `<p class="report-description">${safeText(description)}</p>`
+                  : ""}
+
+                <div class="report-meta">
+                  <span class="meta-item">
+                    <i class="meta-dot"></i>
+                    ${safeText(location)}
+                  </span>
+
+                  <span class="meta-item">
+                    <i class="meta-dot"></i>
+                    ${safeText(formatDate(date))}
+                  </span>
+                </div>
+              </div>
+
+              ${mapLink}
+            </article>
+          `;
+        }).join("");
+      }
+
+      async function loadFeed() {
+        refreshButton.disabled = true;
+        refreshButton.textContent = "Loading…";
+        count.textContent = "Loading reports…";
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL.replace(/\/$/, "")}/`,
+            { headers: { Accept: "application/json" } }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+          }
+
+          const payload = await response.json();
+
+          const reports = Array.isArray(payload)
+            ? payload
+            : payload.results || payload.reports || payload.data || [];
+
+          if (!Array.isArray(reports)) {
+            throw new Error("Unexpected report data received.");
+          }
+
+          renderReports(reports);
+        } catch (error) {
+          console.error("Could not load NIGRANI feed:", error);
+
+          count.textContent = "Unable to load reports";
+
+          showState(
+            "Couldn’t load the feed",
+            "The backend may be waking up or temporarily unavailable. Check your connection and try again."
+          );
+        } finally {
+          refreshButton.disabled = false;
+          refreshButton.textContent = "↻ Refresh";
+        }
+      }
+
+      refreshButton.addEventListener("click", loadFeed);
+      loadFeed();
+    })();
+  </script>
 </body>
 </html>
