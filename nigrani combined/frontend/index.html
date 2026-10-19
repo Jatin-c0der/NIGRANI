@@ -4,221 +4,1014 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ffffff">
-  <title>Live Map — NIGRANI</title>
+
+  <title>NIGRANI — Civic Intelligence</title>
+  <meta
+    name="description"
+    content="Report civic hazards, bring local problems to attention, and help make communities safer with NIGRANI."
+  >
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <style>
-    :root{--ink:#151713;--muted:#70746b;--line:#e8eae4;--lime:#b7ff42;--paper:#fff;--soft:#f7f8f4;--red:#e34f4f;--orange:#e99a2d;--green:#5c9c46}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}
-    header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center}
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.7px;font-size:22px}
-    .brand-mark{width:28px;height:28px;border-radius:9px;background:var(--lime);display:grid;place-items:center;font-weight:700;font-size:15px}
-    .links{display:flex;gap:26px;align-items:center;font-size:14px;color:#55594f}
-    .links a:hover,.links a.active{color:var(--ink)}
-    .links a.active{font-weight:700}
-    .nav-cta{background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700}
-    main{padding:42px 0 60px}
-    .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:#5f7d37}
-    h1{font:600 clamp(32px,5vw,48px)/1.06 "Space Grotesk",sans-serif;letter-spacing:-1.8px;margin:12px 0}
-    .intro{color:var(--muted);font-size:15px;line-height:1.7;max-width:650px;margin:0}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:28px 0 16px}
-    .live-pill{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;background:var(--soft);border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:700}
-    .dot{width:8px;height:8px;border-radius:50%;background:#70b84c;box-shadow:0 0 0 4px #70b84c20}
-    .refresh{border:1px solid #dfe2d9;background:white;border-radius:10px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer}
-    .refresh:hover{background:var(--soft)}
-    .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:stretch}
-    .map-card,.side-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
-    .card-head{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
-    .card-head h2{font:600 16px "Space Grotesk",sans-serif;margin:0}
-    .small-label{font-size:11px;color:var(--muted)}
-    #dynamicMap{height:490px;width:100%;background:#eef1e9;z-index:1}
-    .map-legend{display:flex;gap:15px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line);font-size:12px;color:#53574e}
-    .legend-item{display:flex;align-items:center;gap:7px}
-    .legend-dot{width:9px;height:9px;border-radius:50%}
-    .side-stack{display:grid;gap:16px;grid-template-rows:auto 1fr}
-    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:15px}
-    .stat{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--soft)}
-    .stat-label{font-size:11px;color:var(--muted);margin-bottom:10px}
-    .stat-value{font:600 30px/1 "Space Grotesk",sans-serif;letter-spacing:-1px}
-    .stat-note{font-size:11px;color:var(--muted);margin-top:8px}
-    .status-card{padding:18px}
-    .status-card h3{font:600 17px "Space Grotesk",sans-serif;margin:0 0 8px}
-    .status-card p{font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 16px}
-    .status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:12px}
-    .status-row strong{font-weight:700}
-    .status-row span{color:var(--muted)}
-    .note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:18px}
-    footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:12px}
-    .leaflet-popup-content-wrapper{border-radius:12px}
-    .popup-title{font-weight:700;margin-bottom:5px}
-    .popup-meta{font-size:12px;color:#60645b}
-    .error{display:none;padding:14px 18px;color:#8b3232;background:#fff3f2;border-top:1px solid #f4d6d3;font-size:13px}
-    @media(max-width:850px){.layout{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr;grid-template-rows:auto}.stats{align-content:start}#dynamicMap{height:420px}}
-    @media(max-width:600px){.wrap{width:min(100% - 28px,1160px)}header{height:66px}.links{gap:13px;font-size:12px}.nav-cta{display:none}.brand{font-size:20px}.links a:nth-child(2){display:none}main{padding:30px 0 42px}.toolbar{margin-top:22px}.side-stack{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#dynamicMap{height:360px}.card-head{padding:14px}.stat{padding:14px}.stat-value{font-size:27px}}
+    :root {
+      --lime: #b7ff42;
+      --black: #11120f;
+      --white: #ffffff;
+      --muted: #686b63;
+      --border: #e8e9e4;
+      --soft: #f7f8f4;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    /* NAVIGATION */
+
+    .navbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.96);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      background: var(--lime);
+      border-radius: 8px;
+      font-size: 17px;
+      color: var(--black);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #55574f;
+    }
+
+    .nav-links a:not(.nav-cta):hover {
+      color: var(--black);
+    }
+
+    .nav-cta,
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--lime);
+      color: var(--black);
+      border: 1px solid var(--lime);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .nav-cta:hover,
+    .btn-primary:hover {
+      background: #a9f332;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid #dfe1d9;
+      border-radius: 8px;
+      background: white;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.18s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--soft);
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 76px 0 64px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #44473e;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 19px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #80c91f;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Space Grotesk", sans-serif;
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    h1 {
+      max-width: 600px;
+      font-size: clamp(38px, 4.8vw, 58px);
+      font-weight: 700;
+    }
+
+    .highlight {
+      display: inline;
+      background: linear-gradient(
+        transparent 63%,
+        var(--lime) 63%,
+        var(--lime) 91%,
+        transparent 91%
+      );
+    }
+
+    .hero-description {
+      max-width: 480px;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+      margin-top: 27px;
+    }
+
+    .hero-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .check-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: #eff9e2;
+      color: #3c7110;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* DECORATIVE HOMEPAGE VISUAL — NOT THE ACTUAL MAP */
+
+    .hero-visual {
+      position: relative;
+      min-width: 0;
+    }
+
+    .visual-card {
+      position: relative;
+      max-width: 430px;
+      margin-left: auto;
+      padding: 21px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: var(--soft);
+    }
+
+    .visual-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .visual-heading {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .visual-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #587d29;
+      background: #e9f8d7;
+      padding: 5px 8px;
+      border-radius: 5px;
+    }
+
+    .illustration {
+      position: relative;
+      min-height: 220px;
+      overflow: hidden;
+      border-radius: 11px;
+      background: #e9ece2;
+      border: 1px solid #e0e3d8;
+    }
+
+    .street {
+      position: absolute;
+      background: #d0d4c8;
+      border: 1px solid #c1c7b8;
+    }
+
+    .street-one {
+      width: 125%;
+      height: 38px;
+      top: 91px;
+      left: -12%;
+      transform: rotate(-20deg);
+    }
+
+    .street-two {
+      width: 35px;
+      height: 150%;
+      top: -20%;
+      left: 52%;
+      transform: rotate(20deg);
+    }
+
+    .street-three {
+      width: 120%;
+      height: 25px;
+      top: 44px;
+      left: -10%;
+      transform: rotate(19deg);
+      background: #dce0d4;
+    }
+
+    .street-four {
+      width: 120%;
+      height: 26px;
+      bottom: 22px;
+      left: -10%;
+      transform: rotate(-12deg);
+      background: #dce0d4;
+    }
+
+    .park {
+      position: absolute;
+      width: 72px;
+      height: 49px;
+      border-radius: 8px;
+      background: #cfe6b4;
+      border: 1px solid #bdd69f;
+    }
+
+    .park-one {
+      top: 13px;
+      left: 15px;
+    }
+
+    .park-two {
+      right: 15px;
+      bottom: 12px;
+      width: 58px;
+      height: 43px;
+    }
+
+    .map-pin {
+      position: absolute;
+      z-index: 2;
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border: 3px solid white;
+      border-radius: 50% 50% 50% 5px;
+      background: var(--lime);
+      box-shadow: 0 2px 8px #0000001c;
+      transform: rotate(-45deg);
+    }
+
+    .map-pin span {
+      transform: rotate(45deg);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .pin-one {
+      top: 66px;
+      left: 38%;
+    }
+
+    .pin-two {
+      top: 133px;
+      left: 66%;
+      background: #ffb3a7;
+    }
+
+    .pin-three {
+      top: 32px;
+      right: 20%;
+    }
+
+    .visual-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .visual-footer p {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .visual-link {
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      white-space: nowrap;
+    }
+
+    /* SHARED SECTION STYLES */
+
+    .section {
+      padding: 65px 0;
+    }
+
+    .section-soft {
+      background: var(--soft);
+      border-top: 1px solid #f0f1eb;
+      border-bottom: 1px solid #f0f1eb;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-kicker {
+      margin-bottom: 9px;
+      color: #68705b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: clamp(27px, 3vw, 36px);
+      font-weight: 700;
+    }
+
+    .section-description {
+      max-width: 450px;
+      margin-top: 11px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* HOW IT WORKS */
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .step-card {
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 17px;
+      border-radius: 9px;
+      background: var(--lime);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .step-card h3 {
+      margin-bottom: 9px;
+      font-size: 17px;
+      letter-spacing: -0.4px;
+    }
+
+    .step-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    /* WHY NIGRANI */
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+      margin-top: 30px;
+    }
+
+    .trust-item {
+      padding-top: 17px;
+      border-top: 2px solid var(--lime);
+    }
+
+    .trust-item h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .trust-item p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    /* FINAL CTA */
+
+    .cta-section {
+      padding: 56px 0;
+    }
+
+    .cta-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      padding: 30px;
+      border-radius: 15px;
+      background: var(--black);
+      color: white;
+    }
+
+    .cta-box h2 {
+      max-width: 520px;
+      font-size: clamp(25px, 3vw, 34px);
+    }
+
+    .cta-box p {
+      margin-top: 10px;
+      color: #c0c2b9;
+      font-size: 13px;
+    }
+
+    .cta-box .btn-primary {
+      flex-shrink: 0;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .footer-brand span {
+      color: #719d31;
+    }
+
+    .footer-copy {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 850px) {
+      .hero {
+        padding-top: 55px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+      }
+
+      .visual-card {
+        margin-inline: 0;
+        max-width: 100%;
+      }
+
+      .illustration {
+        min-height: 240px;
+      }
+
+      .nav-links {
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(100% - 30px, 1120px);
+      }
+
+      .navbar {
+        height: 64px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .nav-links {
+        gap: 12px;
+      }
+
+      .nav-links a:not(.nav-cta) {
+        display: none;
+      }
+
+      .nav-cta {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 43px 0 45px;
+      }
+
+      .hero-grid {
+        gap: 30px;
+      }
+
+      h1 {
+        font-size: clamp(36px, 10vw, 47px);
+        letter-spacing: -1.5px;
+      }
+
+      .hero-description {
+        margin-top: 16px;
+        font-size: 14px;
+      }
+
+      .hero-actions {
+        gap: 9px;
+        margin-top: 22px;
+      }
+
+      .hero-actions a {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+
+      .hero-note {
+        align-items: flex-start;
+        font-size: 11px;
+      }
+
+      .visual-card {
+        padding: 14px;
+      }
+
+      .illustration {
+        min-height: 205px;
+      }
+
+      .section {
+        padding: 47px 0;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 22px;
+      }
+
+      .section-heading > a {
+        font-size: 12px;
+      }
+
+      .steps-grid,
+      .trust-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .step-card {
+        padding: 19px;
+      }
+
+      .step-number {
+        margin-bottom: 12px;
+      }
+
+      .trust-grid {
+        gap: 22px;
+      }
+
+      .cta-section {
+        padding: 35px 0;
+      }
+
+      .cta-box {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 23px;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
+
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="brand" href="index.html"><span class="brand-mark">N</span>NIGRANI</a>
-    <nav class="links" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="report.html">Report</a>
-      <a class="active" href="map.html">Live map</a>
-      <a href="feed.html">Public feed</a>
-    </nav>
-    <a class="nav-cta" href="report.html">＋ Report a hazard</a>
-  </div>
-</header>
-<main class="wrap">
-  <div class="eyebrow">Community safety · Map view</div>
-  <h1>The city, at a glance.</h1>
-  <p class="intro">Explore submitted community reports on the map. Markers appear when a report includes usable location coordinates.</p>
-  <div class="toolbar">
-    <div class="live-pill"><span class="dot"></span><span id="mapStatus">Connecting to reports…</span></div>
-    <button class="refresh" id="refreshMap" type="button">↻ Refresh reports</button>
-  </div>
-  <div class="layout">
-    <section class="map-card" aria-label="Community report map">
-      <div class="card-head"><h2>Report locations</h2><span class="small-label">OpenStreetMap</span></div>
-      <div id="dynamicMap" role="application" aria-label="Map showing submitted reports"></div>
-      <div class="map-legend">
-        <span class="legend-item"><i class="legend-dot" style="background:#e34f4f"></i>Critical / high</span>
-        <span class="legend-item"><i class="legend-dot" style="background:#e99a2d"></i>Medium</span>
-        <span class="legend-item"><i class="legend-dot" style="background:#5c9c46"></i>Low / other</span>
-      </div>
-      <div class="error" id="mapError" role="status"></div>
-    </section>
-    <aside class="side-stack">
-      <section class="side-card">
-        <div class="card-head"><h2>Report overview</h2><span class="small-label">From API</span></div>
-        <div class="stats">
-          <div class="stat"><div class="stat-label">All reports</div><div class="stat-value" id="statTotal">—</div><div class="stat-note">Submitted reports</div></div>
-          <div class="stat"><div class="stat-label">Critical / high</div><div class="stat-value" id="statCritical">—</div><div class="stat-note">Higher urgency</div></div>
-          <div class="stat"><div class="stat-label">Medium</div><div class="stat-value" id="statMedium">—</div><div class="stat-note">Moderate urgency</div></div>
-          <div class="stat"><div class="stat-label">Low / other</div><div class="stat-value" id="statLow">—</div><div class="stat-note">Other reports</div></div>
+
+  <!-- NAVIGATION -->
+  <header class="navbar">
+    <div class="container nav-inner">
+
+      <a class="brand" href="index.html" aria-label="NIGRANI home">
+        <span class="brand-mark" aria-hidden="true">N</span>
+        NIGRANI
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="map.html">Map</a>
+        <a href="feed.html">Public Feed</a>
+        <a href="#how-it-works">How it works</a>
+        <a class="nav-cta" href="report.html">＋ Report a hazard</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <main>
+
+    <!-- HOMEPAGE HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Civic intelligence · Community action
+          </div>
+
+          <h1>
+            See a hazard?<br>
+            <span class="highlight">Make it visible.</span>
+          </h1>
+
+          <p class="hero-description">
+            From damaged roads to overflowing waste, local hazards deserve
+            attention. NIGRANI helps people document civic issues and bring
+            them into public view.
+          </p>
+
+          <div class="hero-actions">
+            <a href="report.html" class="btn-primary">
+              Report a hazard <span aria-hidden="true">↗</span>
+            </a>
+
+            <a href="feed.html" class="btn-secondary">
+              Explore public reports <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <p class="hero-note">
+            <span class="check-icon" aria-hidden="true">✓</span>
+            No account required. Review your report before submitting.
+          </p>
+
         </div>
-      </section>
-      <section class="side-card status-card">
-        <h3>What you’re seeing</h3>
-        <p>This map displays reports returned by the NIGRANI backend. It is not a live sensor network, and a marker’s absence does not mean an area is hazard-free.</p>
-        <div class="status-row"><strong>Mapped reports</strong><span id="mappedCount">—</span></div>
-        <div class="status-row"><strong>Last refreshed</strong><span id="lastUpdated">Not yet</span></div>
-        <div class="status-row"><strong>Map data</strong><span>OpenStreetMap</span></div>
-      </section>
-    </aside>
-  </div>
-  <p class="note">Map tiles © OpenStreetMap contributors. Report locations are shown only when the backend provides valid latitude and longitude values.</p>
-</main>
-<footer><div class="wrap">NIGRANI · Civic intelligence for safer streets.</div></footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-(() => {
-  const API_BASE_URL = window.NIGRANI_API_BASE_URL ||
-    localStorage.getItem('NIGRANI_API_BASE_URL') ||
-    'https://nigrani-eg4p.onrender.com/api/reports';
 
-  const mapStatus = document.getElementById('mapStatus');
-  const errorBox = document.getElementById('mapError');
-  const map = L.map('dynamicMap').setView([28.5921, 77.0460], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
 
-  const markers = L.layerGroup().addTo(map);
-  const norm = value => String(value ?? '').trim().toLowerCase();
-  const pick = (obj, keys) => {
-    for (const key of keys) if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key];
-    return null;
-  };
-  const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function urgencyOf(report) {
-    const raw = norm(pick(report, ['urgency','severity','priority','risk_level','level']));
-    if (raw.includes('critical') || raw.includes('high') || raw.includes('severe')) return 'high';
-    if (raw.includes('medium') || raw.includes('moderate')) return 'medium';
-    if (raw.includes('low')) return 'low';
-    return 'low';
-  }
-  function titleOf(report) {
-    const violations = pick(report, ['violations','hazards','detected_violations']);
-    if (Array.isArray(violations) && violations.length) {
-      const first = violations[0];
-      return typeof first === 'string' ? first : pick(first, ['title','name','type','description']) || 'Community safety report';
-    }
-    return pick(report, ['title','complaint_draft','description','message']) || 'Community safety report';
-  }
-  function coordinatesOf(report) {
-    const lat = Number(pick(report, ['latitude','lat']));
-    const lng = Number(pick(report, ['longitude','lng','lon','long']));
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
-    if (pick(report, ['latitude','lat']) === null || pick(report, ['longitude','lng','lon','long']) === null) return null;
-    return [lat,lng];
-  }
-  function markerColor(level) { return level === 'high' ? '#e34f4f' : level === 'medium' ? '#e99a2d' : '#5c9c46'; }
-  function makeIcon(level) {
-    return L.divIcon({
-      className: '',
-      html: `<div style="width:16px;height:16px;border:3px solid #fff;border-radius:50%;background:${markerColor(level)};box-shadow:0 1px 7px #0004"></div>`,
-      iconSize: [16,16], iconAnchor: [8,8], popupAnchor: [0,-8]
-    });
-  }
-  async function refreshReports() {
-    mapStatus.textContent = 'Refreshing reports…';
-    errorBox.style.display = 'none';
-    try {
-      const response = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/`, {headers:{'Accept':'application/json'}});
-      if (!response.ok) throw new Error(`Server returned ${response.status}`);
-      const payload = await response.json();
-      const reports = Array.isArray(payload) ? payload : (payload.results || payload.reports || payload.data || []);
-      if (!Array.isArray(reports)) throw new Error('The API response did not contain a report list.');
+        <!-- Decorative illustration, not an interactive map -->
+        <div class="hero-visual" aria-label="Illustration of civic hazards on local streets">
 
-      let high = 0, medium = 0, low = 0, mapped = 0;
-      markers.clearLayers();
-      const bounds = [];
-      reports.forEach(report => {
-        const level = urgencyOf(report);
-        if (level === 'high') high++; else if (level === 'medium') medium++; else low++;
-        const coords = coordinatesOf(report);
-        if (!coords) return;
-        mapped++;
-        const marker = L.marker(coords, {icon:makeIcon(level)});
-        const date = pick(report, ['created_at','timestamp','date','reported_at']);
-        const popup = `<div class="popup-title">${safeText(titleOf(report))}</div><div class="popup-meta">Urgency: ${safeText(level)}${date ? `<br>Reported: ${safeText(date)}` : ''}</div>`;
-        marker.bindPopup(popup);
-        markers.addLayer(marker);
-        bounds.push(coords);
-      });
-      document.getElementById('statTotal').textContent = reports.length;
-      document.getElementById('statCritical').textContent = high;
-      document.getElementById('statMedium').textContent = medium;
-      document.getElementById('statLow').textContent = low;
-      document.getElementById('mappedCount').textContent = mapped;
-      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-      mapStatus.textContent = `${reports.length} report${reports.length === 1 ? '' : 's'} loaded`;
-      if (bounds.length > 0) map.fitBounds(bounds, {padding:[35,35], maxZoom:14});
-      else map.setView([28.5921,77.0460],12);
-      if (!mapped && reports.length) {
-        errorBox.textContent = 'Reports loaded, but none currently include usable map coordinates.';
-        errorBox.style.display = 'block';
-      }
-    } catch (error) {
-      console.error('Could not load NIGRANI reports:', error);
-      mapStatus.textContent = 'Could not load reports';
-      errorBox.textContent = 'Could not load reports from the backend. Check your internet connection or try refreshing in a moment.';
-      errorBox.style.display = 'block';
-    }
-  }
-  document.getElementById('refreshMap').addEventListener('click', refreshReports);
-  refreshReports();
-})();
-</script>
+          <div class="visual-card">
+
+            <div class="visual-header">
+              <div class="visual-heading">Your neighbourhood matters</div>
+              <span class="visual-label">TAKE ACTION</span>
+            </div>
+
+            <div class="illustration" aria-hidden="true">
+
+              <div class="park park-one"></div>
+              <div class="park park-two"></div>
+
+              <div class="street street-one"></div>
+              <div class="street street-two"></div>
+              <div class="street street-three"></div>
+              <div class="street street-four"></div>
+
+              <div class="map-pin pin-one"><span>!</span></div>
+              <div class="map-pin pin-two"><span>!</span></div>
+              <div class="map-pin pin-three"><span>!</span></div>
+
+            </div>
+
+            <div class="visual-footer">
+              <p>Notice a problem in your area?</p>
+              <a href="report.html" class="visual-link">Report it →</a>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+    <section class="section section-soft" id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Simple by design</p>
+            <h2>From observation to action.</h2>
+            <p class="section-description">
+              Document a civic issue, review the information, and decide
+              when you're ready to submit it.
+            </p>
+          </div>
+
+          <a href="report.html" class="btn-secondary">
+            Start a report →
+          </a>
+        </div>
+
+
+        <div class="steps-grid">
+
+          <article class="step-card">
+            <div class="step-number">01</div>
+            <h3>Capture the issue</h3>
+            <p>
+              Use your device's camera to photograph a visible civic hazard.
+              Add your location when available.
+            </p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">02</div>
+            <h3>Analyze and review</h3>
+            <p>
+              Get an initial analysis of the image, then review the suggested
+              information before deciding what to submit.
+            </p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">03</div>
+            <h3>Submit and share</h3>
+            <p>
+              Submit your report for inclusion in the public reports feed
+              and map, where available.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- WHY NIGRANI -->
+    <section class="section" id="about">
+      <div class="container">
+
+        <p class="section-kicker">Why NIGRANI</p>
+        <h2>Make local problems harder to overlook.</h2>
+
+        <p class="section-description">
+          A straightforward way to document civic hazards and help people
+          stay informed about issues in their surroundings.
+        </p>
+
+
+        <div class="trust-grid">
+
+          <article class="trust-item">
+            <h3>Accessible reporting</h3>
+            <p>
+              Create a report without creating an account. Use the camera
+              and provide location details when available.
+            </p>
+          </article>
+
+          <article class="trust-item">
+            <h3>AI-assisted analysis</h3>
+            <p>
+              Image analysis can help identify a potential hazard. Review
+              the suggested information before submitting your report.
+            </p>
+          </article>
+
+          <article class="trust-item">
+            <h3>Public visibility</h3>
+            <p>
+              Explore submitted reports through the public feed and map
+              to see issues that have been documented by the community.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- FINAL CALL TO ACTION -->
+    <section class="cta-section">
+      <div class="container">
+
+        <div class="cta-box">
+
+          <div>
+            <h2>A safer neighbourhood starts with noticing.</h2>
+            <p>
+              If you see a civic hazard, document it and help bring it to attention.
+            </p>
+          </div>
+
+          <a href="report.html" class="btn-primary">
+            Create a report <span aria-hidden="true">↗</span>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+
+      <a class="footer-brand" href="index.html">
+        NIGRANI<span>.</span>
+      </a>
+
+      <p class="footer-copy">
+        Civic Intelligence · Built for community awareness
+      </p>
+
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="index.html">Home</a>
+        <a href="map.html">Map</a>
+        <a href="feed.html">Public Feed</a>
+        <a href="report.html">Report</a>
+      </nav>
+
+    </div>
+  </footer>
+
 </body>
 </html>
