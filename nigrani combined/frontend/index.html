@@ -1,229 +1,212 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NIGRANI — AI-powered civic safety platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,450;1,9..144,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<style>
-  :root{
-    --ink:#0D0F14; --ink-panel:#15181F; --paper:#F5F3EE; --paper-dim:#AFB3BE;
-    --slate:#6E7A8A; --brass:#C9A15A; --line:rgba(245,243,238,.09); --line-strong:rgba(245,243,238,.18);
-    --serif:'Fraunces',Georgia,serif; --sans:'Work Sans',sans-serif;
-    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  *{box-sizing:inherit;margin:0;padding:0}
-  html,body{height:100%;background:var(--ink);color:var(--paper)}
-  body{font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-  a{color:inherit;text-decoration:none}
-  ::selection{background:var(--brass);color:var(--ink)}
-  .wrap{padding:0 clamp(24px,6vw,90px)}
-
-  nav.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1.5rem clamp(24px,6vw,90px);mix-blend-mode:difference}
-  nav.top .mark{font-family:var(--serif);font-size:1.05rem}
-  nav.top .links{display:flex;gap:2.2rem;font-size:.85rem}
-  nav.top .links a{opacity:.7;transition:opacity .25s ease;position:relative}
-  nav.top .links a:hover{opacity:1}
-  nav.top .links a.soon::after{content:"soon";position:absolute;top:-10px;right:-22px;font-size:.55rem;color:var(--brass);letter-spacing:.05em}
-  @media(max-width:640px){nav.top .links{display:none}}
-
-  .hero{min-height:100vh;position:relative;display:flex;flex-direction:column;justify-content:center;padding-top:6rem}
-  #scene{position:absolute;inset:0;z-index:0;opacity:0}
-  .hero .inner{position:relative;z-index:1}
-  .kicker{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--slate);margin-bottom:1.8rem;overflow:hidden}
-  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--brass)}
-  h1{font-family:var(--serif);font-weight:450;font-size:clamp(2.6rem,7.5vw,5.6rem);line-height:1.05;letter-spacing:-.01em;max-width:18ch}
-  h1 .line{display:block;overflow:hidden}
-  h1 .line span{display:inline-block;transform:translateY(115%)}
-  h1 em{font-style:italic;color:var(--brass)}
-  .lede{max-width:46ch;color:var(--paper-dim);font-size:1.02rem;line-height:1.7;margin-top:2rem;opacity:0}
-  .cta-row{display:flex;gap:1rem;margin-top:2.6rem;opacity:0}
-  .btn{display:inline-flex;align-items:center;gap:.6rem;border:1px solid var(--line-strong);padding:.9rem 1.7rem;border-radius:999px;font-size:.9rem;transition:border-color .3s ease,background .3s ease,color .3s ease}
-  .btn:hover{border-color:var(--brass);background:rgba(201,161,90,.08);color:var(--brass)}
-  .btn.ghost{border-color:transparent;color:var(--paper-dim)}
-  .scroll-cue{position:absolute;bottom:2.4rem;left:clamp(24px,6vw,90px);font-size:.75rem;color:var(--slate);display:flex;align-items:center;gap:.6rem;opacity:0}
-  .scroll-cue i{width:1px;height:32px;background:var(--line-strong);position:relative;overflow:hidden}
-  .scroll-cue i::after{content:"";position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--brass);animation:cue 1.8s ease-in-out infinite}
-  @keyframes cue{50%{top:100%}100%{top:100%}}
-
-  section.next{min-height:100vh;padding:7rem clamp(24px,6vw,90px);border-top:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
-  .next .label{color:var(--slate);font-size:.9rem;margin-bottom:1rem}
-  .next h2{font-family:var(--serif);font-weight:450;font-size:clamp(2rem,4.5vw,3.4rem);max-width:16ch;line-height:1.15}
-  .next h2 em{font-style:italic;color:var(--brass)}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3.5rem}
-  .card{border:1px solid var(--line);background:var(--ink-panel);border-radius:10px;padding:2rem;opacity:0;transform:translateY(40px)}
-  .card b{display:block;font-family:var(--serif);font-size:2rem;color:var(--brass);margin-bottom:.6rem}
-  .card p{color:var(--paper-dim);font-size:.92rem;line-height:1.6}
-  @media(max-width:800px){.cards{grid-template-columns:1fr}}
-  footer.note{padding:2rem clamp(24px,6vw,90px) 3rem;color:var(--slate);font-size:.78rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
-
-  #pageTransition{position:fixed;inset:0;background:var(--ink);z-index:9999;opacity:1;transition:opacity .55s ease;pointer-events:none}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="NIGRANI helps people report visible civic safety hazards with AI-assisted analysis.">
+  <title>NIGRANI — Civic safety, made clearer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lime: #B7FF42;
+      --lime-soft: #efffd7;
+      --ink: #10120e;
+      --muted: #6b7065;
+      --line: #e6e9e1;
+      --paper: #ffffff;
+      --wash: #f7f8f4;
+      --radius: 18px;
+      --sans: "DM Sans", system-ui, sans-serif;
+      --display: "Space Grotesk", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #86c925; outline-offset: 3px; }
+    .shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar { height: 76px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font: 700 17px var(--display); letter-spacing: -.04em; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--lime); color: var(--ink); font: 700 17px var(--display); }
+    .navlinks { display: flex; align-items: center; gap: 28px; color: #4e534a; font-size: 13px; font-weight: 600; }
+    .navlinks a:hover { color: #000; }
+    .nav-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 17px; background: var(--ink); color: white !important; border-radius: 999px; }
+    .nav-cta:hover { background: #30352b; }
+    .status { display: inline-flex; align-items: center; gap: 8px; color: #555b50; font-size: 12px; font-weight: 600; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #63a91a; box-shadow: 0 0 0 4px #eaf8d8; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 58px; align-items: center; padding: 86px 0 78px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 22px; color: #5d6257; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow-mark { width: 22px; height: 3px; background: var(--lime); border-radius: 3px; }
+    h1 { max-width: 680px; margin: 0; font: 600 clamp(48px, 6.5vw, 78px)/.99 var(--display); letter-spacing: -.075em; }
+    h1 span { position: relative; z-index: 0; white-space: nowrap; }
+    h1 span::after { content: ""; position: absolute; left: 0; right: 0; bottom: 5px; height: 13px; background: var(--lime); z-index: -1; transform: rotate(-1deg); }
+    .hero-copy { max-width: 520px; margin: 25px 0 0; color: var(--muted); font-size: 16px; line-height: 1.75; }
+    .actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 30px; }
+    .button { min-height: 50px; padding: 0 21px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; border: 1px solid var(--line); font: 700 13px var(--sans); transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+    .button-primary:hover { background: #a9f02e; }
+    .button-secondary { background: white; }
+    .button-secondary:hover { border-color: #b7bcb0; }
+    .trustline { display: flex; flex-wrap: wrap; gap: 17px; margin-top: 27px; color: #777d71; font-size: 11px; font-weight: 600; }
+    .trustline span { display: inline-flex; align-items: center; gap: 7px; }
+    .check { width: 16px; height: 16px; display: inline-grid; place-items: center; background: var(--lime-soft); border-radius: 50%; color: #416e0e; font-size: 10px; }
+    .visual { min-height: 430px; position: relative; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 26px; background: var(--wash); }
+    .visual::before, .visual::after { content: ""; position: absolute; border: 1px solid #e5e9de; border-radius: 50%; width: 340px; height: 340px; }
+    .visual::after { width: 245px; height: 245px; }
+    .map-card { position: relative; z-index: 1; width: min(78%, 360px); aspect-ratio: 1 / .85; background: white; border: 1px solid #e5e9df; border-radius: 18px; box-shadow: 0 22px 60px #1a24120d; transform: rotate(-3deg); overflow: hidden; }
+    .map-top { height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-bottom: 1px solid #edf0e8; color: #6e7467; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+    .live-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border-radius: 999px; background: var(--lime-soft); color: #476f17; letter-spacing: 0; }
+    .live-pill i { width: 5px; height: 5px; border-radius: 50%; background: #64a817; }
+    .map-art { position: absolute; inset: 46px 0 0; background-color: #f9faf6; background-image: linear-gradient(30deg, transparent 47%, #e5e9df 48%, #e5e9df 49%, transparent 50%), linear-gradient(120deg, transparent 46%, #e5e9df 47%, #e5e9df 49%, transparent 50%), linear-gradient(90deg, transparent 49%, #eef0e9 50%, transparent 51%); background-size: 92px 70px, 115px 100px, 50px 50px; }
+    .road { position: absolute; height: 9px; background: #e3e7dc; border: 2px solid white; border-radius: 99px; transform-origin: left center; }
+    .road.r1 { width: 115%; left: -10%; top: 36%; transform: rotate(25deg); }
+    .road.r2 { width: 110%; left: 4%; top: 72%; transform: rotate(-30deg); }
+    .road.r3 { width: 90%; left: 21%; top: 3%; transform: rotate(70deg); }
+    .road.r4 { width: 80%; left: 0; top: 55%; transform: rotate(-8deg); }
+    .pin { position: absolute; z-index: 2; width: 34px; height: 34px; display: grid; place-items: center; border: 4px solid white; border-radius: 50% 50% 50% 8px; background: var(--lime); box-shadow: 0 4px 12px #1d2c1022; transform: rotate(-45deg); }
+    .pin::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+    .pin.p1 { left: 25%; top: 27%; }
+    .pin.p2 { left: 62%; top: 52%; background: #ffcf74; }
+    .pin.p3 { left: 43%; top: 69%; }
+    .floating-note { position: absolute; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 13px; background: white; box-shadow: 0 12px 34px #15200d0d; }
+    .floating-note.one { top: 19%; left: 4%; }
+    .floating-note.two { right: 4%; bottom: 17%; }
+    .note-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: var(--lime-soft); font-size: 15px; }
+    .floating-note b, .floating-note small { display: block; }
+    .floating-note b { font: 700 11px var(--display); }
+    .floating-note small { margin-top: 3px; color: #777d71; font-size: 9px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 25px; }
+    .section-label { margin-bottom: 10px; color: #73796d; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    h2 { margin: 0; font: 600 clamp(29px, 4vw, 42px)/1.1 var(--display); letter-spacing: -.055em; }
+    .section-desc { max-width: 340px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .steps { padding: 48px 0 80px; border-top: 1px solid var(--line); }
+    .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .step { min-height: 205px; padding: 23px; border: 1px solid var(--line); border-radius: var(--radius); background: white; }
+    .step-num { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: var(--lime); font: 700 12px var(--display); }
+    .step h3 { margin: 25px 0 8px; font: 600 18px var(--display); letter-spacing: -.035em; }
+    .step p { max-width: 34ch; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .bottom-cta { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding: 30px; border-radius: 22px; background: var(--ink); color: white; }
+    .bottom-cta h2 { max-width: 500px; font-size: clamp(25px, 3.5vw, 35px); }
+    .bottom-cta p { margin: 10px 0 0; color: #c1c5bb; font-size: 13px; line-height: 1.6; }
+    .bottom-cta .button { flex-shrink: 0; }
+    footer { display: flex; justify-content: space-between; gap: 16px; padding: 28px 0 34px; color: #777d71; font-size: 11px; }
+    footer nav { display: flex; gap: 18px; }
+    footer a:hover { color: var(--ink); }
+    @media (max-width: 800px) {
+      .shell { width: min(100% - 36px, 620px); }
+      .topbar { height: 68px; }
+      .navlinks { gap: 15px; }
+      .navlinks a:not(.nav-cta) { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 36px; padding: 62px 0 56px; }
+      h1 { max-width: 600px; font-size: clamp(48px, 10vw, 72px); }
+      .hero-copy { font-size: 15px; }
+      .visual { min-height: 360px; }
+      .section-head { align-items: start; flex-direction: column; }
+      .step-grid { grid-template-columns: 1fr; }
+      .step { min-height: auto; }
+      .step h3 { margin-top: 18px; }
+      .bottom-cta { align-items: flex-start; flex-direction: column; padding: 25px; }
+    }
+    @media (max-width: 420px) {
+      .shell { width: calc(100% - 30px); }
+      .brand { font-size: 15px; }
+      .status { font-size: 10px; }
+      .hero { padding-top: 48px; }
+      h1 { font-size: clamp(43px, 12vw, 54px); }
+      .hero-copy { margin-top: 19px; font-size: 14px; }
+      .actions { display: grid; grid-template-columns: 1fr; margin-top: 23px; }
+      .button { width: 100%; }
+      .trustline { gap: 10px 14px; font-size: 10px; }
+      .visual { min-height: 320px; border-radius: 20px; }
+      .map-card { width: 82%; }
+      .floating-note { padding: 9px; gap: 7px; }
+      .floating-note.one { left: 2%; top: 13%; }
+      .floating-note.two { right: 2%; bottom: 12%; }
+      .note-icon { width: 27px; height: 27px; }
+      .floating-note b { font-size: 10px; }
+      .floating-note small { font-size: 8px; }
+      .steps { padding: 38px 0 55px; }
+      footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
 </head>
 <body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="NIGRANI home">
+        <span class="brand-mark">N</span><span>NIGRANI</span>
+      </a>
+      <nav class="navlinks" aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="map.html">Map</a>
+        <a href="feed.html">Public feed</a>
+        <a class="nav-cta" href="report.html">Make a report <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
 
-<div class="page-transition" id="pageTransition"></div>
-<nav class="top">
-  <a href="index.html" class="mark">NIGRANI</a>
-  <div class="links">
-    <a href="report.html">Report</a>
-    <a href="map.html">Map</a>
-    <a href="feed.html">Feed</a>
+    <main>
+      <section class="hero" id="home">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-mark"></span> Civic safety, made clearer</div>
+          <h1>Notice hazards.<br>Make streets <span>safer.</span></h1>
+          <p class="hero-copy">NIGRANI helps turn a photograph of a visible public-safety hazard into an AI-assisted report you can review before deciding to send it.</p>
+          <div class="actions">
+            <a class="button button-primary" href="report.html">Create a report <span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="feed.html">Explore public reports <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="trustline">
+            <span><i class="check">✓</i> No account required</span>
+            <span><i class="check">✓</i> Review before sending</span>
+            <span><i class="check">✓</i> Anonymous by design</span>
+          </div>
+        </div>
+
+        <div class="visual" aria-label="Illustration of civic reports on a simplified map">
+          <div class="map-card">
+            <div class="map-top"><span>PUBLIC SAFETY OVERVIEW</span><span class="live-pill"><i></i> REPORT MAP</span></div>
+            <div class="map-art">
+              <div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="road r4"></div>
+              <span class="pin p1"></span><span class="pin p2"></span><span class="pin p3"></span>
+            </div>
+          </div>
+          <div class="floating-note one"><span class="note-icon">⌁</span><span><b>Hazard spotted</b><small>Photo-based review</small></span></div>
+          <div class="floating-note two"><span class="note-icon">✓</span><span><b>Human review</b><small>You approve before sending</small></span></div>
+        </div>
+      </section>
+
+      <section class="steps" id="how-it-works">
+        <div class="section-head">
+          <div><div class="section-label">A simple process</div><h2>From photo to report.</h2></div>
+          <p class="section-desc">Keep the process focused: capture what you see, review the suggested findings, and choose whether to submit.</p>
+        </div>
+        <div class="step-grid">
+          <article class="step"><span class="step-num">01</span><h3>Capture a hazard</h3><p>Use your device camera to photograph a visible civic or construction safety concern.</p></article>
+          <article class="step"><span class="step-num">02</span><h3>Review the analysis</h3><p>AI-assisted analysis highlights possible issues and prepares a draft for you to check.</p></article>
+          <article class="step"><span class="step-num">03</span><h3>Choose to submit</h3><p>Review the result and explicitly send the report. Submitted reports can appear in the public feed.</p></article>
+        </div>
+      </section>
+
+      <section class="bottom-cta" aria-label="Create a civic safety report">
+        <div><h2>Seen something that needs attention?</h2><p>Start with a photo. You can review the suggested report before submitting it.</p></div>
+        <a class="button button-primary" href="report.html">Start a report <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <span>© <span id="year"></span> NIGRANI · Civic safety intelligence</span>
+      <nav aria-label="Footer navigation"><a href="report.html">Report</a><a href="map.html">Map</a><a href="feed.html">Public feed</a></nav>
+    </footer>
   </div>
-</nav>
-
-<section class="hero" id="home">
-  <canvas id="scene"></canvas>
-  <div class="wrap inner">
-    <div class="kicker"><span class="dot"></span> Live civic safety network — Delhi NCR</div>
-    <h1>
-      <span class="line"><span>Notice what</span></span>
-      <span class="line"><span>others <em>miss.</em></span></span>
-    </h1>
-    <p class="lede">NIGRANI turns a simple street photograph into structured safety intelligence — then routes it to the people who can act on it.</p>
-    <div class="cta-row">
-      <a class="btn" href="report.html">Create a report ↗</a>
-      <a class="btn ghost" href="#next">See how it works</a>
-    </div>
-  </div>
-  <div class="scroll-cue"><i></i> Scroll</div>
-</section>
-
-<section class="next" id="next">
-  <div class="label">01 / How it works</div>
-  <h2>One photo. <em>Three moves</em> after that.</h2>
-  <div class="cards">
-    <div class="card"><b>01</b><p>Capture a hazard with your camera — no forms, no categories to pick from.</p></div>
-    <div class="card"><b>02</b><p>NIGRANI reads the image and drafts a structured report automatically.</p></div>
-    <div class="card"><b>03</b><p>You approve it, and it's routed to the right civic authority.</p></div>
-  </div>
-</section>
-
-<footer class="note">
-  <span>NIGRANI — civic safety intelligence</span>
-</footer>
-
-<script>
-// ---------- page transition ----------
-const pageTransition = document.getElementById('pageTransition');
-window.addEventListener('load', () => {
-  requestAnimationFrame(() => { pageTransition.style.opacity = '0'; });
-});
-document.querySelectorAll('a[href$=".html"]').forEach(link => {
-  link.addEventListener('click', e => {
-    const dest = link.getAttribute('href');
-    if (dest === location.pathname.split('/').pop()) return;
-    e.preventDefault();
-    pageTransition.style.pointerEvents = 'all';
-    pageTransition.style.opacity = '1';
-    setTimeout(() => { location.href = dest; }, 480);
-  });
-});
-
-// ---------- Lenis smooth scroll ----------
-try{
-  const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
-  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time)=>{ lenis.raf(time*1000); });
-  gsap.ticker.lagSmoothing(0);
-}catch(e){ console.warn('Lenis unavailable', e); }
-
-gsap.registerPlugin(ScrollTrigger);
-
-// ---------- hero text + UI entrance ----------
-const tl = gsap.timeline({ defaults:{ ease:'power4.out' } });
-tl.to('.kicker', { opacity:1, duration:.8 })
-  .to('h1 .line span', { y:'0%', duration:1.1, stagger:.12 }, '-=.4')
-  .to('.lede', { opacity:1, duration:.9 }, '-=.5')
-  .to('.cta-row', { opacity:1, duration:.9 }, '-=.6')
-  .to('.scroll-cue', { opacity:1, duration:.6 }, '-=.4')
-  .to('#scene', { opacity:1, duration:1.4 }, '-=1.6');
-
-gsap.utils.toArray('.card').forEach((card,i)=>{
-  gsap.to(card, {
-    opacity:1, y:0, duration:.9, ease:'power3.out', delay:i*.1,
-    scrollTrigger:{ trigger:card, start:'top 85%' }
-  });
-});
-gsap.to('.next h2, .next .label', {
-  opacity:1, duration:.9,
-  scrollTrigger:{ trigger:'.next', start:'top 75%' }
-});
-
-// ---------- Three.js hero scene: a tilted point-grid "map" with pins ----------
-(function(){
-  const canvas = document.getElementById('scene');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, .1, 100);
-  camera.position.set(0, 4.2, 7.5);
-  camera.lookAt(0,0,0);
-
-  const group = new THREE.Group();
-  group.rotation.x = -0.55;
-  scene.add(group);
-
-  // grid of points ("the map")
-  const gridSize = 34, spacing = 0.34;
-  const gPositions = [];
-  for(let i=0;i<gridSize;i++){
-    for(let j=0;j<gridSize;j++){
-      gPositions.push((i-gridSize/2)*spacing, 0, (j-gridSize/2)*spacing);
-    }
-  }
-  const gGeo = new THREE.BufferGeometry();
-  gGeo.setAttribute('position', new THREE.Float32BufferAttribute(gPositions,3));
-  const gMat = new THREE.PointsMaterial({ color:0x6E7A8A, size:0.02, transparent:true, opacity:0.5 });
-  group.add(new THREE.Points(gGeo, gMat));
-
-  // brass "hazard" pins at a few points
-  const pinGeo = new THREE.SphereGeometry(0.075, 16, 16);
-  const pinMat = new THREE.MeshBasicMaterial({ color:0xC9A15A });
-  const pinSpots = [[-2.2,0,-1.4],[1.6,0,0.6],[0.3,0,-2.4],[-0.8,0,1.9]];
-  pinSpots.forEach(([x,y,z])=>{
-    const pin = new THREE.Mesh(pinGeo, pinMat);
-    pin.position.set(x, 0.05, z);
-    group.add(pin);
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.11,0.14,32),
-      new THREE.MeshBasicMaterial({ color:0xC9A15A, transparent:true, opacity:0.5, side:THREE.DoubleSide })
-    );
-    ring.position.set(x,0.051,z);
-    ring.rotation.x = -Math.PI/2;
-    group.add(ring);
-  });
-
-  function resize(){
-    const w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
-    renderer.setSize(w,h,false);
-    camera.aspect = w/h; camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  let mx=0,my=0;
-  window.addEventListener('pointermove',(e)=>{
-    mx = (e.clientX/innerWidth - .5);
-    my = (e.clientY/innerHeight - .5);
-  });
-
-  function animate(){
-    requestAnimationFrame(animate);
-    group.rotation.z += (mx*0.35 - group.rotation.z*0.35) * 0.04;
-    group.position.y += ((my*-0.4) - group.position.y) * 0.04;
-    group.rotation.y += 0.0009;
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
-</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
