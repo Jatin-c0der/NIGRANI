@@ -1,173 +1,705 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Capture and review a civic safety report with NIGRANI.">
-  <title>NIGRANI — Create a report</title>
+  <meta name="description" content="Report public safety concerns with NIGRANI.">
+  <title>NIGRANI — Report an Issue</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root{--lime:#B7FF42;--lime-soft:#efffd7;--ink:#10120e;--muted:#6b7065;--line:#e6e9e1;--paper:#fff;--wash:#f7f8f4;--red:#c23e35;--sans:"DM Sans",system-ui,sans-serif;--display:"Space Grotesk",system-ui,sans-serif}
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--wash);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
-    button,input,textarea{font:inherit}
-    button,a{-webkit-tap-highlight-color:transparent}
-    button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #86c925;outline-offset:3px}
-    .shell{width:min(1080px,calc(100% - 36px));margin:auto}
-    .topbar{height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#fff}
-    .brand{display:flex;align-items:center;gap:10px;font:700 16px var(--display);letter-spacing:-.04em}
-    .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--lime);border-radius:9px;font:700 16px var(--display)}
-    .navlinks{display:flex;align-items:center;gap:24px;font-size:13px;font-weight:600;color:#555b50}
-    .navlinks a.active{color:var(--ink)}
-    .navlinks a.active::after{content:"";display:block;height:3px;margin-top:5px;background:var(--lime);border-radius:4px}
-    .page{padding:43px 0 70px}
-    .back{display:inline-flex;align-items:center;gap:7px;color:#687063;font-size:12px;font-weight:700;margin-bottom:23px}
-    .back:hover{color:var(--ink)}
-    .intro{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:27px}
-    .eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:#72786b;font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
-    .eyebrow i{width:20px;height:3px;background:var(--lime);border-radius:3px}
-    h1{margin:0;font:600 clamp(34px,5vw,49px)/1.04 var(--display);letter-spacing:-.06em}
-    .intro p{max-width:330px;margin:0;color:var(--muted);font-size:13px;line-height:1.7}
-    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px;align-items:start}
-    .panel{border:1px solid var(--line);border-radius:19px;background:var(--paper);overflow:hidden}
-    .panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 21px;border-bottom:1px solid var(--line)}
-    .panel-head h2{margin:0;font:600 15px var(--display);letter-spacing:-.025em}
-    .step-tag{padding:6px 9px;border-radius:999px;background:var(--lime-soft);color:#476d19;font-size:10px;font-weight:700}
-    .panel-body{padding:21px}
-    .camera-box{position:relative;display:grid;place-items:center;min-height:260px;overflow:hidden;border:1px dashed #cdd3c5;border-radius:14px;background:#f8faf5}
-    #camera{display:none;width:100%;max-height:420px;aspect-ratio:4/3;object-fit:cover;background:#10120e}
-    #canvas{display:none;max-width:100%;max-height:420px;object-fit:contain;background:#10120e}
-    .camera-placeholder{text-align:center;padding:28px 18px}
-    .camera-symbol{width:54px;height:54px;display:grid;place-items:center;margin:0 auto 14px;border-radius:16px;background:var(--lime);font-size:24px}
-    .camera-placeholder h3{margin:0 0 7px;font:600 17px var(--display);letter-spacing:-.03em}
-    .camera-placeholder p{max-width:270px;margin:0 auto;color:var(--muted);font-size:12px;line-height:1.6}
-    .camera-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
-    .btn{min-height:46px;padding:0 15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--ink);font-size:12px;font-weight:700;cursor:pointer;transition:background .18s ease,transform .18s ease,border-color .18s ease}
-    .btn:hover{transform:translateY(-1px);border-color:#c8cec0}
-    .btn.primary{border-color:var(--lime);background:var(--lime)}
-    .btn.primary:hover{background:#a9f02e}
-    .btn.dark{background:var(--ink);border-color:var(--ink);color:white}
-    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-    .btn.full{width:100%;margin-top:10px}
-    .field{margin-top:20px}
-    .field label{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;font-size:12px;font-weight:700}
-    .optional{color:#858b7f;font-weight:500}
-    textarea{display:block;width:100%;min-height:94px;resize:vertical;padding:13px 14px;border:1px solid #dfe4d9;border-radius:12px;background:#fff;color:var(--ink);font-size:13px;line-height:1.6}
-    textarea::placeholder{color:#9a9f94}
-    .field-hint{margin:8px 0 0;color:#858b7f;font-size:11px;line-height:1.55}
-    .location-row{display:flex;align-items:center;gap:10px;margin-top:17px;padding:12px;border-radius:12px;background:var(--wash)}
-    .location-icon{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:10px;background:#fff;border:1px solid var(--line)}
-    .location-copy{min-width:0;flex:1}
-    .location-copy b{display:block;font-size:11px}
-    .location-copy small{display:block;margin-top:3px;color:var(--muted);font-size:10px;overflow-wrap:anywhere}
-    .location-row .btn{min-height:36px;padding:0 12px;font-size:10px;white-space:nowrap}
-    .privacy-note{display:flex;gap:9px;margin-top:15px;color:#73796d;font-size:10px;line-height:1.6}
-    .privacy-note span{color:#527d20;font-weight:700}
-    .side-stack{display:grid;gap:18px}
-    .info-card{padding:20px}
-    .info-card h2{margin:0 0 14px;font:600 16px var(--display);letter-spacing:-.03em}
-    .info-list{display:grid;gap:15px}
-    .info-item{display:grid;grid-template-columns:32px 1fr;gap:11px;align-items:start}
-    .info-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--lime-soft);font-size:14px}
-    .info-item b{display:block;margin:1px 0 4px;font-size:12px}
-    .info-item p{margin:0;color:var(--muted);font-size:11px;line-height:1.6}
-    .notice{padding:15px;border:1px solid #e8eddc;border-radius:13px;background:#fbfdf7;color:#666d5c;font-size:11px;line-height:1.65}
-    .notice strong{color:var(--ink)}
-    #analysisResult{display:none;margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fbfcf8}
-    #analysisResult h3{margin:0 0 10px;font:600 15px var(--display)}
-    #analysisResult .analysis-text{color:#4e5547;font-size:12px;line-height:1.65}
-    #analysisResult .analysis-text ul{padding-left:18px;margin:8px 0}
-    #analysisResult .analysis-text li{margin:4px 0}
-    #statusMessage{display:none;margin-top:13px;padding:11px 13px;border-radius:10px;background:var(--lime-soft);color:#3e6414;font-size:12px;line-height:1.55}
-    #statusMessage.error{display:block;background:#fff0ef;color:var(--red)}
-    .loading{display:inline-flex;align-items:center;gap:8px}
-    .spinner{width:14px;height:14px;border:2px solid #d8e8c2;border-top-color:#436d12;border-radius:50%;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .footer{display:flex;justify-content:space-between;gap:14px;padding:22px 0 30px;color:#7c8276;font-size:10px}
-    .footer a:hover{color:var(--ink)}
-    @media(max-width:760px){
-      .shell{width:min(100% - 28px,560px)}
-      .topbar{height:64px}
-      .navlinks{gap:13px}
-      .navlinks a:not(.active){display:none}
-      .page{padding:28px 0 45px}
-      .intro{display:block}
-      .intro p{margin-top:13px}
-      .layout{grid-template-columns:1fr}
-      .side-stack{grid-template-columns:1fr}
-      .camera-box{min-height:230px}
-      .panel-body{padding:15px}
-      .panel-head{padding:16px}
-      .info-card{padding:17px}
-      .footer{flex-direction:column}
+    :root {
+      --lime: #B7FF42;
+      --lime-soft: #efffd7;
+      --ink: #10120e;
+      --muted: #6b7065;
+      --line: #e6e9e1;
+      --paper: #ffffff;
+      --wash: #f7f8f4;
+      --red: #c23e35;
+      --sans: "DM Sans", sans-serif;
+      --display: "Space Grotesk", sans-serif;
     }
-    @media(max-width:390px){
-      .camera-actions{grid-template-columns:1fr}
-      .location-row{align-items:flex-start;flex-wrap:wrap}
-      .location-row .btn{margin-left:44px}
-      .intro h1{font-size:34px}
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
     }
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, textarea { font: inherit; }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid #86c925;
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1080px, calc(100% - 36px));
+      margin: auto;
+    }
+
+    .topbar {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font: 700 16px var(--display);
+      letter-spacing: -.04em;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      background: var(--lime);
+      border-radius: 9px;
+    }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555b50;
+    }
+
+    .navlinks a.active { color: var(--ink); }
+
+    .navlinks a.active::after {
+      content: "";
+      display: block;
+      height: 3px;
+      margin-top: 5px;
+      border-radius: 4px;
+      background: var(--lime);
+    }
+
+    .page { padding: 35px 0 50px; }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .intro {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow i {
+      width: 19px;
+      height: 3px;
+      border-radius: 4px;
+      background: var(--lime);
+    }
+
+    h1 {
+      margin: 0;
+      font: 600 clamp(32px, 5vw, 46px)/1.08 var(--display);
+      letter-spacing: -.055em;
+    }
+
+    .intro p {
+      max-width: 300px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(250px, .85fr);
+      align-items: start;
+      gap: 18px;
+    }
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--paper);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 16px 19px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2,
+    .info-card h2 {
+      margin: 0;
+      font: 600 15px var(--display);
+      letter-spacing: -.025em;
+    }
+
+    .step-tag {
+      padding: 6px 9px;
+      border-radius: 99px;
+      background: var(--lime-soft);
+      color: #476d19;
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .panel-body { padding: 19px; }
+
+    .camera-box {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+      overflow: hidden;
+      border: 1px dashed #cdd3c5;
+      border-radius: 13px;
+      background: #f8faf5;
+    }
+
+    #camera {
+      display: none;
+      width: 100%;
+      max-height: 390px;
+      aspect-ratio: 4 / 3;
+      object-fit: contain;
+      background: #10120e;
+    }
+
+    #canvas {
+      display: none;
+      max-width: 100%;
+      max-height: 390px;
+      object-fit: contain;
+      background: #10120e;
+    }
+
+    .camera-placeholder {
+      padding: 25px 16px;
+      text-align: center;
+    }
+
+    .camera-symbol {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      border-radius: 14px;
+      background: var(--lime);
+      font-size: 23px;
+    }
+
+    .camera-placeholder h3 {
+      margin: 0 0 6px;
+      font: 600 16px var(--display);
+    }
+
+    .camera-placeholder p {
+      max-width: 260px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .camera-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      min-height: 43px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: white;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn:hover { border-color: #c8cec0; }
+
+    .btn.primary {
+      border-color: var(--lime);
+      background: var(--lime);
+    }
+
+    .btn.primary:hover { background: #a9f02e; }
+
+    .btn.dark {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: white;
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .full { width: 100%; }
+
+    .field { margin-top: 19px; }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .optional {
+      color: #858b7f;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 75px;
+      resize: vertical;
+      padding: 12px;
+      border: 1px solid #dfe4d9;
+      border-radius: 11px;
+      background: white;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    textarea::placeholder { color: #9a9f94; }
+
+    .field-hint {
+      margin: 7px 0 0;
+      color: #858b7f;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .location-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      padding: 11px;
+      border-radius: 11px;
+      background: var(--wash);
+    }
+
+    .location-icon {
+      flex: 0 0 32px;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+    }
+
+    .location-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .location-copy b {
+      display: block;
+      font-size: 11px;
+    }
+
+    .location-copy small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .location-row .btn {
+      min-height: 35px;
+      padding: 0 11px;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .analyze-button { margin-top: 13px; }
+
+    #analysisResult {
+      display: none;
+      margin-top: 15px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfcf8;
+    }
+
+    #analysisResult h3 {
+      margin: 0 0 9px;
+      font: 600 14px var(--display);
+    }
+
+    #analysisText {
+      color: #4e5547;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    #analysisText ul {
+      padding-left: 18px;
+      margin: 8px 0;
+    }
+
+    #analysisText li { margin: 4px 0; }
+
+    #sendReport { margin-top: 12px; }
+
+    #statusMessage {
+      display: none;
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: var(--lime-soft);
+      color: #3e6414;
+      font-size: 11px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    #statusMessage.error {
+      background: #fff0ef;
+      color: var(--red);
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .info-card { padding: 18px; }
+
+    .info-card h2 { margin-bottom: 15px; }
+
+    .info-list {
+      display: grid;
+      gap: 15px;
+    }
+
+    .info-item {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      align-items: start;
+      gap: 10px;
+    }
+
+    .info-icon {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--lime-soft);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .info-item b {
+      display: block;
+      margin: 1px 0 4px;
+      font-size: 11px;
+    }
+
+    .info-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .notice {
+      padding: 13px;
+      border: 1px solid #e8eddc;
+      border-radius: 12px;
+      background: #fbfdf7;
+      color: #666d5c;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .notice strong { color: var(--ink); }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px 0 25px;
+      color: #7c8276;
+      font-size: 10px;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid #d8e8c2;
+      border-top-color: #436d12;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: calc(100% - 28px); }
+
+      .topbar { min-height: 62px; }
+
+      .navlinks { gap: 12px; }
+
+      .navlinks a:not(.active) { display: none; }
+
+      .page { padding: 25px 0 30px; }
+
+      .back { margin-bottom: 15px; }
+
+      .intro {
+        display: block;
+        margin-bottom: 18px;
+      }
+
+      h1 { font-size: 35px; }
+
+      .intro p {
+        margin-top: 9px;
+        font-size: 11px;
+      }
+
+      .layout { grid-template-columns: 1fr; }
+
+      .panel-head { padding: 14px 15px; }
+
+      .panel-body { padding: 14px; }
+
+      .camera-box { min-height: 200px; }
+
+      .side-stack { gap: 10px; }
+
+      .info-card { padding: 15px; }
+
+      .info-list { gap: 11px; }
+
+      .notice { padding: 11px; }
+
+      .footer {
+        flex-direction: column;
+        padding-top: 17px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .camera-actions { grid-template-columns: 1fr 1fr; }
+
+      .location-row { flex-wrap: wrap; }
+
+      .location-copy { flex-basis: calc(100% - 52px); }
+
+      .location-row .btn { margin-left: 42px; }
+
+      h1 { font-size: 32px; }
+
+      .step-tag { font-size: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" href="index.html"><span class="brand-mark">N</span><span>NIGRANI</span></a>
+      <a class="brand" href="index.html">
+        <span class="brand-mark">N</span>
+        <span>NIGRANI</span>
+      </a>
+
       <nav class="navlinks" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="map.html">Map</a><a href="feed.html">Public feed</a><a class="active" href="report.html" aria-current="page">Report</a>
+        <a href="index.html">Home</a>
+        <a href="map.html">Map</a>
+        <a href="feed.html">Public feed</a>
+        <a class="active" href="report.html" aria-current="page">Report</a>
       </nav>
     </header>
 
     <main class="page">
       <a class="back" href="index.html">← Back to home</a>
+
       <div class="intro">
-        <div><div class="eyebrow"><i></i> Citizen reporting</div><h1>Make a report.</h1></div>
-        <p>Capture what you see, review the AI-assisted findings, and choose whether to submit the report.</p>
+        <div>
+          <div class="eyebrow"><i></i> Citizen reporting</div>
+          <h1>Make a report.</h1>
+        </div>
+
+        <p>Capture a safety issue, review the findings, and submit when ready.</p>
       </div>
 
       <div class="layout">
         <section class="panel">
-          <div class="panel-head"><h2>Report details</h2><span class="step-tag">STEP 1 OF 2</span></div>
+          <div class="panel-head">
+            <h2>Report details</h2>
+            <span class="step-tag">STEP 1 OF 2</span>
+          </div>
+
           <div class="panel-body">
             <div class="camera-box">
               <div class="camera-placeholder" id="cameraPlaceholder">
                 <div class="camera-symbol" aria-hidden="true">⌁</div>
                 <h3>Capture the issue</h3>
-                <p>Use your device camera to photograph a visible public safety concern. Gallery uploads aren't supported.</p>
+                <p>Use your device camera. Gallery uploads aren't supported.</p>
               </div>
-              <video id="camera" autoplay playsinline aria-label="Live camera preview"></video>
+
+              <video id="camera" autoplay playsinline
+                aria-label="Live camera preview"></video>
+
               <canvas id="canvas"></canvas>
             </div>
+
             <div class="camera-actions">
-              <button class="btn primary" id="startCamera" type="button">◎ Start camera</button>
-              <button class="btn" id="capturePhoto" type="button" disabled>Capture photo</button>
+              <button class="btn primary" id="startCamera" type="button">
+                ◎ Start camera
+              </button>
+
+              <button class="btn" id="capturePhoto" type="button" disabled>
+                Capture photo
+              </button>
             </div>
-            <button class="btn full" id="retakePhoto" type="button" style="display:none">Retake photo</button>
+
+            <button class="btn full" id="retakePhoto" type="button"
+              style="display:none; margin-top:9px;">
+              Retake photo
+            </button>
 
             <div class="field">
-              <label for="complaintDescription">What did you notice? <span class="optional">Optional</span></label>
-              <textarea id="complaintDescription" maxlength="800" placeholder="Add context that may help someone understand the issue…"></textarea>
-              <p class="field-hint">Avoid including faces, private documents, or other personal information where possible.</p>
+              <label for="complaintDescription">
+                What did you notice?
+                <span class="optional">Optional</span>
+              </label>
+
+              <textarea id="complaintDescription" maxlength="500"
+                placeholder="Briefly describe the issue…"></textarea>
+
+              <p class="field-hint">
+                Avoid including faces or personal information.
+              </p>
             </div>
 
             <div class="location-row">
               <div class="location-icon" aria-hidden="true">⌖</div>
-              <div class="location-copy"><b>Report location</b><small id="locationStatus">Not added — location is optional</small></div>
-              <button class="btn" id="detectLoc" type="button">Add location</button>
+
+              <div class="location-copy">
+                <b>Report location</b>
+                <small id="locationStatus">Not added · Optional</small>
+              </div>
+
+              <button class="btn" id="detectLoc" type="button">
+                Add location
+              </button>
             </div>
 
-            <button class="btn primary full" id="analyzePhoto" type="button" disabled>Analyze photo <span aria-hidden="true">→</span></button>
+            <button class="btn primary full analyze-button"
+              id="analyzePhoto" type="button" disabled>
+              Analyze photo →
+            </button>
+
             <div id="statusMessage" role="status" aria-live="polite"></div>
+
             <div id="analysisResult" aria-live="polite">
               <h3>Analysis result</h3>
-              <div class="analysis-text" id="analysisText"></div>
-              <button class="btn primary full" id="sendReport" type="button" style="display:none">Submit report</button>
+              <div id="analysisText"></div>
+
+              <button class="btn primary full" id="sendReport"
+                type="button" style="display:none">
+                Submit report
+              </button>
             </div>
           </div>
         </section>
@@ -175,232 +707,530 @@
         <aside class="side-stack">
           <section class="panel info-card">
             <h2>How it works</h2>
+
             <div class="info-list">
-              <div class="info-item"><span class="info-icon">01</span><div><b>Capture a photo</b><p>Use the live camera to show the issue clearly.</p></div></div>
-              <div class="info-item"><span class="info-icon">02</span><div><b>Review the findings</b><p>AI suggests possible hazards and helps prepare a report. Check the result before submitting.</p></div></div>
-              <div class="info-item"><span class="info-icon">03</span><div><b>Submit when ready</b><p>Your report is sent only after you select the submit button.</p></div></div>
+              <div class="info-item">
+                <span class="info-icon">01</span>
+                <div>
+                  <b>Capture</b>
+                  <p>Photograph the safety concern.</p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <span class="info-icon">02</span>
+                <div>
+                  <b>Review</b>
+                  <p>Check the AI findings for accuracy.</p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <span class="info-icon">03</span>
+                <div>
+                  <b>Submit</b>
+                  <p>Your report is sent after confirmation.</p>
+                </div>
+              </div>
             </div>
           </section>
-          <div class="notice"><strong>Please use your judgement.</strong> AI analysis can be incorrect or incomplete. Don't put yourself in danger to capture a photo, and contact emergency services directly for urgent threats.</div>
-          <div class="notice"><strong>Privacy note.</strong> Location is optional. Only include information needed to explain the public safety concern.</div>
+
+          <div class="notice">
+            <strong>Stay safe.</strong>
+            Don't put yourself at risk to capture a photo. AI findings may be incorrect.
+            Contact emergency services directly for urgent threats.
+          </div>
+
+          <div class="notice">
+            <strong>Privacy.</strong>
+            Location is optional. Include only information relevant to the issue.
+          </div>
         </aside>
       </div>
     </main>
 
-    <footer class="footer"><span>© <span id="year"></span> NIGRANI · Civic safety intelligence</span><span><a href="map.html">Map</a> &nbsp;·&nbsp; <a href="feed.html">Public feed</a></span></footer>
+    <footer class="footer">
+      <span>© <span id="year"></span> NIGRANI · Civic safety</span>
+      <span>
+        <a href="map.html">Map</a> ·
+        <a href="feed.html">Public feed</a>
+      </span>
+    </footer>
   </div>
 
   <script>
-  (() => {
-    const API_BASE_URL = window.NIGRANI_API_BASE_URL || localStorage.getItem('NIGRANI_API_BASE_URL') || 'https://nigrani-eg4p.onrender.com/api/reports';
-    const camera = document.getElementById('camera');
-    const canvas = document.getElementById('canvas');
-    const placeholder = document.getElementById('cameraPlaceholder');
-    const startBtn = document.getElementById('startCamera');
-    const captureBtn = document.getElementById('capturePhoto');
-    const retakeBtn = document.getElementById('retakePhoto');
-    const analyzeBtn = document.getElementById('analyzePhoto');
-    const sendBtn = document.getElementById('sendReport');
-    const status = document.getElementById('statusMessage');
-    const result = document.getElementById('analysisResult');
-    const analysisText = document.getElementById('analysisText');
-    const locationStatus = document.getElementById('locationStatus');
-    let stream = null, photoBlob = null, latitude = null, longitude = null, reportToken = null;
+    (() => {
+      const API_BASE_URL =
+        window.NIGRANI_API_BASE_URL ||
+        localStorage.getItem('NIGRANI_API_BASE_URL') ||
+        'https://nigrani-eg4p.onrender.com/api/reports';
 
-    document.getElementById('year').textContent = new Date().getFullYear();
+      const camera = document.getElementById('camera');
+      const canvas = document.getElementById('canvas');
+      const placeholder = document.getElementById('cameraPlaceholder');
 
-    function showStatus(message, isError = false) {
-      status.textContent = message;
-      status.className = isError ? 'error' : '';
-      status.style.display = 'block';
-    }
-    function clearStatus() { status.textContent = ''; status.style.display = 'none'; status.className = ''; }
-    function stopCamera() {
-      if (stream) stream.getTracks().forEach(track => track.stop());
-      stream = null;
-      camera.srcObject = null;
-      captureBtn.disabled = true;
-    }
-    async function parseJSON(response) {
-      const text = await response.text();
-      try { return text ? JSON.parse(text) : {}; }
-      catch { return { error: `Server returned HTTP ${response.status}` }; }
-    }
-    function escapeHTML(value) {
-      return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-    }
-    function resetAnalysis() {
-      result.style.display = 'none';
-      analysisText.innerHTML = '';
-      sendBtn.style.display = 'none';
-      reportToken = null;
-      analyzeBtn.disabled = !photoBlob;
-      analyzeBtn.innerHTML = 'Analyze photo <span aria-hidden="true">→</span>';
-    }
+      const startBtn = document.getElementById('startCamera');
+      const captureBtn = document.getElementById('capturePhoto');
+      const retakeBtn = document.getElementById('retakePhoto');
+      const analyzeBtn = document.getElementById('analyzePhoto');
+      const sendBtn = document.getElementById('sendReport');
 
-    startBtn.addEventListener('click', async () => {
-      clearStatus();
-      if (!navigator.mediaDevices?.getUserMedia) {
-        showStatus('Camera access is unavailable in this browser. Open the site over HTTPS on a supported browser.', true);
-        return;
+      const status = document.getElementById('statusMessage');
+      const result = document.getElementById('analysisResult');
+      const analysisText = document.getElementById('analysisText');
+      const locationStatus = document.getElementById('locationStatus');
+      const descriptionInput = document.getElementById('complaintDescription');
+
+      let stream = null;
+      let photoBlob = null;
+      let latitude = null;
+      let longitude = null;
+      let analysisToken = null;
+      let busy = false;
+
+      document.getElementById('year').textContent =
+        new Date().getFullYear();
+
+      function showStatus(message, isError = false) {
+        status.textContent = message;
+        status.className = isError ? 'error' : '';
+        status.style.display = 'block';
       }
-      try {
-        stopCamera();
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
-        camera.srcObject = stream;
-        camera.style.display = 'block';
-        canvas.style.display = 'none';
-        placeholder.style.display = 'none';
-        captureBtn.disabled = false;
-        startBtn.textContent = 'Camera ready';
-        photoBlob = null;
-        analyzeBtn.disabled = true;
-        retakeBtn.style.display = 'none';
-        resetAnalysis();
-      } catch (error) {
-        showStatus(error.name === 'NotAllowedError' ? 'Camera permission was denied. Allow camera access in your browser settings and try again.' : 'Could not start the camera. Check that it is not being used by another app.', true);
-      }
-    });
 
-    captureBtn.addEventListener('click', () => {
-      if (!stream || !camera.videoWidth) {
-        showStatus('Wait until the camera preview is ready, then capture the photo.', true);
-        return;
+      function clearStatus() {
+        status.textContent = '';
+        status.style.display = 'none';
+        status.className = '';
       }
-      canvas.width = camera.videoWidth;
-      canvas.height = camera.videoHeight;
-      canvas.getContext('2d').drawImage(camera, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(blob => {
-        if (!blob) { showStatus('Could not capture the photo. Please try again.', true); return; }
-        photoBlob = blob;
-        stopCamera();
-        camera.style.display = 'none';
-        canvas.style.display = 'block';
-        placeholder.style.display = 'none';
+
+      function stopCamera() {
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+
+        stream = null;
+        camera.srcObject = null;
         captureBtn.disabled = true;
-        startBtn.textContent = 'Camera stopped';
-        retakeBtn.style.display = 'inline-flex';
-        analyzeBtn.disabled = false;
-        resetAnalysis();
-        clearStatus();
-      }, 'image/jpeg', 0.88);
-    });
-
-    retakeBtn.addEventListener('click', async () => {
-      photoBlob = null;
-      canvas.style.display = 'none';
-      placeholder.style.display = 'grid';
-      retakeBtn.style.display = 'none';
-      startBtn.textContent = '◎ Start camera';
-      analyzeBtn.disabled = true;
-      resetAnalysis();
-      clearStatus();
-      startBtn.click();
-    });
-
-    document.getElementById('detectLoc').addEventListener('click', () => {
-      clearStatus();
-      if (!navigator.geolocation) {
-        showStatus('Geolocation is not available in this browser. You can still submit without a location.', true);
-        return;
       }
-      locationStatus.textContent = 'Requesting permission…';
-      navigator.geolocation.getCurrentPosition(position => {
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
-        locationStatus.textContent = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-        showStatus('Location added. You can still remove it by refreshing the page before submitting.', false);
-      }, error => {
-        locationStatus.textContent = 'Not added — location is optional';
-        showStatus(error.code === error.PERMISSION_DENIED ? 'Location permission was denied. You can continue without location.' : 'Could not get location. You can continue without it.', true);
-      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
-    });
 
-    analyzeBtn.addEventListener('click', async () => {
-      if (!photoBlob) { showStatus('Capture a photo first.', true); return; }
-      clearStatus();
-      resetAnalysis();
-      analyzeBtn.disabled = true;
-      analyzeBtn.innerHTML = '<span class="loading"><i class="spinner"></i> Analyzing photo…</span>';
-      try {
-        const form = new FormData();
-        form.append('image', photoBlob, 'nigrani-capture.jpg');
-        const description = document.getElementById('complaintDescription').value.trim();
-        if (description) form.append('description', description);
-        const response = await fetch(`${API_BASE_URL}/analyze/`, { method: 'POST', body: form });
-        const data = await parseJSON(response);
-        if (!response.ok) throw new Error(data.error || data.detail || `Analysis failed (${response.status})`);
-        reportToken = data.token || data.report_token || null;
-        const violations = Array.isArray(data.violations) ? data.violations : [];
-        const summary = data.explanation || data.summary || data.message || '';
-        let markup = '';
-        if (data.urgency) markup += `<p><strong>Urgency:</strong> ${escapeHTML(data.urgency)}</p>`;
-        if (violations.length) markup += `<ul>${violations.map(item => `<li>${escapeHTML([item.category, item.detail].filter(Boolean).join(': ') || item.detail || 'Potential hazard')}</li>`).join('')}</ul>`;
-        if (summary) markup += `<p>${escapeHTML(summary)}</p>`;
-        if (!markup) markup = '<p>Analysis completed. Review the result carefully before deciding what to do next.</p>';
-        analysisText.innerHTML = markup;
-        result.style.display = 'block';
-        if (violations.length && reportToken) {
-          sendBtn.style.display = 'inline-flex';
-          showStatus('Review the suggested findings. Submit only if the report is accurate.', false);
-        } else {
-          showStatus('Analysis completed, but no report token or clear hazard was returned. You can retake the photo and try again.', true);
+      async function parseJSON(response) {
+        const text = await response.text();
+
+        try {
+          return text ? JSON.parse(text) : {};
+        } catch {
+          return {
+            error: `Server returned an invalid response (${response.status}).`
+          };
         }
-        analyzeBtn.innerHTML = 'Analyze again';
-        analyzeBtn.disabled = false;
-        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } catch (error) {
-        showStatus(error.message || 'Could not analyze the photo. Please try again.', true);
-        analyzeBtn.innerHTML = 'Try analysis again →';
-        analyzeBtn.disabled = false;
       }
-    });
 
-    sendBtn.addEventListener('click', async () => {
-      if (!photoBlob || !reportToken) {
-        showStatus('Please analyze the captured photo before submitting.', true);
-        return;
+      function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[char]);
       }
-      clearStatus();
-      sendBtn.disabled = true;
-      sendBtn.innerHTML = '<span class="loading"><i class="spinner"></i> Submitting…</span>';
-      try {
-        const form = new FormData();
-        form.append('image', photoBlob, 'nigrani-capture.jpg');
-        form.append('token', reportToken);
-        if (latitude !== null && longitude !== null) {
-          form.append('latitude', String(latitude));
-          form.append('longitude', String(longitude));
-        }
-        const response = await fetch(`${API_BASE_URL}/send/`, { method: 'POST', body: form });
-        const data = await parseJSON(response);
-        if (!response.ok) throw new Error(data.error || data.detail || `Submission failed (${response.status})`);
-        showStatus(data.message || 'Report submitted successfully. Thank you for helping improve public safety.', false);
+
+      function resetAnalysis() {
+        analysisToken = null;
+        result.style.display = 'none';
+        analysisText.textContent = '';
         sendBtn.style.display = 'none';
         sendBtn.disabled = false;
         sendBtn.textContent = 'Submit report';
-        stopCamera();
-        photoBlob = null;
-        reportToken = null;
-        analyzeBtn.disabled = true;
+
+        analyzeBtn.disabled = !photoBlob;
         analyzeBtn.textContent = 'Analyze photo →';
-        locationStatus.textContent = 'Not added — location is optional';
-        latitude = longitude = null;
-        document.getElementById('complaintDescription').value = '';
-        result.style.display = 'none';
+      }
+
+      function formatViolations(violations) {
+        if (!Array.isArray(violations)) return [];
+
+        return violations.map(item => {
+          if (typeof item === 'string') return item;
+
+          if (item && typeof item === 'object') {
+            const category = item.category || item.type || '';
+            const detail = item.detail || item.description || item.name || '';
+
+            return [category, detail]
+              .filter(Boolean)
+              .join(': ');
+          }
+
+          return '';
+        }).filter(Boolean);
+      }
+
+      startBtn.addEventListener('click', async () => {
+        if (busy) return;
+
+        clearStatus();
+
+        if (!navigator.mediaDevices?.getUserMedia) {
+          showStatus(
+            'Camera access is unavailable. Open this page over HTTPS in a supported browser.',
+            true
+          );
+          return;
+        }
+
+        stopCamera();
+
+        startBtn.disabled = true;
+        startBtn.textContent = 'Starting camera…';
+
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'environment' } },
+            audio: false
+          });
+
+          camera.srcObject = stream;
+          camera.style.display = 'block';
+          canvas.style.display = 'none';
+          placeholder.style.display = 'none';
+
+          captureBtn.disabled = false;
+          startBtn.textContent = 'Camera ready';
+
+          photoBlob = null;
+          retakeBtn.style.display = 'none';
+          resetAnalysis();
+        } catch (error) {
+          stopCamera();
+
+          showStatus(
+            error.name === 'NotAllowedError'
+              ? 'Camera permission denied. Allow camera access and try again.'
+              : 'Could not start the camera. Check your browser permissions.',
+            true
+          );
+
+          startBtn.textContent = '◎ Start camera';
+        } finally {
+          startBtn.disabled = false;
+        }
+      });
+
+      captureBtn.addEventListener('click', () => {
+        if (!stream || !camera.videoWidth) {
+          showStatus('Wait for the camera preview, then try again.', true);
+          return;
+        }
+
+        canvas.width = camera.videoWidth;
+        canvas.height = camera.videoHeight;
+
+        const context = canvas.getContext('2d');
+
+        if (!context) {
+          showStatus('Could not capture the photo. Please try again.', true);
+          return;
+        }
+
+        context.drawImage(camera, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(blob => {
+          if (!blob) {
+            showStatus('Could not capture the photo. Please try again.', true);
+            return;
+          }
+
+          photoBlob = blob;
+
+          stopCamera();
+
+          camera.style.display = 'none';
+          canvas.style.display = 'block';
+          placeholder.style.display = 'none';
+
+          startBtn.textContent = '◎ Start camera';
+          retakeBtn.style.display = 'inline-flex';
+
+          resetAnalysis();
+          clearStatus();
+        }, 'image/jpeg', 0.88);
+      });
+
+      retakeBtn.addEventListener('click', () => {
+        photoBlob = null;
         canvas.style.display = 'none';
+        camera.style.display = 'none';
         placeholder.style.display = 'grid';
+
         retakeBtn.style.display = 'none';
         startBtn.textContent = '◎ Start camera';
-      } catch (error) {
-        showStatus(error.message || 'Could not submit the report. Please try again.', true);
-        sendBtn.disabled = false;
-        sendBtn.textContent = 'Submit report';
-      }
-    });
 
-    window.addEventListener('beforeunload', stopCamera);
-  })();
+        resetAnalysis();
+        clearStatus();
+
+        startBtn.click();
+      });
+
+      document.getElementById('detectLoc').addEventListener('click', () => {
+        clearStatus();
+
+        if (!navigator.geolocation) {
+          showStatus(
+            'Location is unavailable. You can still submit without it.',
+            true
+          );
+          return;
+        }
+
+        locationStatus.textContent = 'Requesting permission…';
+
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+
+            locationStatus.textContent =
+              `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+
+            showStatus('Location added.', false);
+          },
+          error => {
+            latitude = null;
+            longitude = null;
+            locationStatus.textContent = 'Not added · Optional';
+
+            showStatus(
+              error.code === error.PERMISSION_DENIED
+                ? 'Location permission denied. You can continue without it.'
+                : 'Could not get location. You can continue without it.',
+              true
+            );
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+          }
+        );
+      });
+
+      analyzeBtn.addEventListener('click', async () => {
+        if (busy) return;
+
+        if (!photoBlob) {
+          showStatus('Capture a photo first.', true);
+          return;
+        }
+
+        const description = descriptionInput.value.trim();
+
+        if (description.length > 500) {
+          showStatus('Keep the description under 500 characters.', true);
+          return;
+        }
+
+        clearStatus();
+        resetAnalysis();
+
+        busy = true;
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML =
+          '<span class="loading"><i class="spinner"></i> Analyzing…</span>';
+
+        try {
+          const form = new FormData();
+
+          form.append('image', photoBlob, 'nigrani-capture.jpg');
+
+          if (description) {
+            form.append('description', description);
+          }
+
+          const response = await fetch(`${API_BASE_URL}/analyze/`, {
+            method: 'POST',
+            body: form
+          });
+
+          const data = await parseJSON(response);
+
+          if (!response.ok) {
+            throw new Error(
+              data.error ||
+              data.detail ||
+              `Analysis failed (${response.status}).`
+            );
+          }
+
+          // The backend's analysis token is required by /send/.
+          analysisToken = data.analysis_token || null;
+
+          const violations = formatViolations(data.violations);
+          const summary =
+            data.why_dangerous ||
+            data.explanation ||
+            data.summary ||
+            '';
+
+          let markup = '';
+
+          if (data.urgency) {
+            markup += `<p><strong>Urgency:</strong> ${escapeHTML(data.urgency)}</p>`;
+          }
+
+          if (violations.length) {
+            markup += '<ul>' +
+              violations.map(item => `<li>${escapeHTML(item)}</li>`).join('') +
+              '</ul>';
+          }
+
+          if (summary) {
+            markup += `<p>${escapeHTML(summary)}</p>`;
+          }
+
+          if (!markup) {
+            markup = '<p>Analysis completed. Review the result carefully.</p>';
+          }
+
+          analysisText.innerHTML = markup;
+          result.style.display = 'block';
+
+          if (violations.length && analysisToken) {
+            sendBtn.style.display = 'inline-flex';
+
+            showStatus(
+              'Review the findings. Submit only if the report is accurate.',
+              false
+            );
+          } else if (!violations.length) {
+            analysisToken = null;
+
+            showStatus(
+              'No clear safety hazard was detected. You can retake the photo.',
+              true
+            );
+          } else {
+            showStatus(
+              'The analysis token was missing. Please try analyzing the photo again.',
+              true
+            );
+          }
+
+          analyzeBtn.textContent = 'Analyze again';
+          result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        } catch (error) {
+          console.error('NIGRANI analysis error:', error);
+
+          showStatus(
+            error.message || 'Could not analyze the photo. Please try again.',
+            true
+          );
+
+          analyzeBtn.textContent = 'Try analysis again →';
+
+        } finally {
+          busy = false;
+          analyzeBtn.disabled = !photoBlob;
+        }
+      });
+
+      sendBtn.addEventListener('click', async () => {
+        if (busy) return;
+
+        if (!photoBlob || !analysisToken) {
+          showStatus('Analyze the captured photo before submitting.', true);
+          return;
+        }
+
+        clearStatus();
+
+        busy = true;
+        sendBtn.disabled = true;
+        analyzeBtn.disabled = true;
+
+        sendBtn.innerHTML =
+          '<span class="loading"><i class="spinner"></i> Submitting…</span>';
+
+        try {
+          const form = new FormData();
+
+          form.append('image', photoBlob, 'nigrani-capture.jpg');
+
+          // Correct field expected by the backend.
+          form.append('analysis_token', analysisToken);
+
+          if (latitude !== null && longitude !== null) {
+            form.append('latitude', String(latitude));
+            form.append('longitude', String(longitude));
+          }
+
+          const response = await fetch(`${API_BASE_URL}/send/`, {
+            method: 'POST',
+            body: form
+          });
+
+          const data = await parseJSON(response);
+
+          if (!response.ok) {
+            throw new Error(
+              data.error ||
+              data.detail ||
+              `Submission failed (${response.status}).`
+            );
+          }
+
+          showStatus(
+            data.message ||
+            'Report submitted successfully. Thank you for helping improve public safety.',
+            false
+          );
+
+          stopCamera();
+
+          photoBlob = null;
+          analysisToken = null;
+          latitude = null;
+          longitude = null;
+
+          descriptionInput.value = '';
+          locationStatus.textContent = 'Not added · Optional';
+
+          camera.style.display = 'none';
+          canvas.style.display = 'none';
+          placeholder.style.display = 'grid';
+
+          retakeBtn.style.display = 'none';
+          startBtn.textContent = '◎ Start camera';
+
+          result.style.display = 'none';
+          analysisText.textContent = '';
+
+          analyzeBtn.disabled = true;
+          analyzeBtn.textContent = 'Analyze photo →';
+
+          sendBtn.style.display = 'none';
+          sendBtn.textContent = 'Submit report';
+
+        } catch (error) {
+          console.error('NIGRANI submission error:', error);
+
+          showStatus(
+            error.message || 'Could not submit the report. Please try again.',
+            true
+          );
+
+          sendBtn.textContent = 'Try submission again';
+
+        } finally {
+          busy = false;
+          sendBtn.disabled = false;
+          analyzeBtn.disabled = !photoBlob;
+        }
+      });
+
+      window.addEventListener('beforeunload', stopCamera);
+    })();
   </script>
 </body>
 </html>
