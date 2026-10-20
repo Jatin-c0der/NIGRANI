@@ -2,223 +2,996 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Explore community safety reports on the NIGRANI map.">
+
   <title>Live Map — NIGRANI</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <style>
-    :root{--ink:#151713;--muted:#70746b;--line:#e8eae4;--lime:#b7ff42;--paper:#fff;--soft:#f7f8f4;--red:#e34f4f;--orange:#e99a2d;--green:#5c9c46}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}
-    header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center}
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.7px;font-size:22px}
-    .brand-mark{width:28px;height:28px;border-radius:9px;background:var(--lime);display:grid;place-items:center;font-weight:700;font-size:15px}
-    .links{display:flex;gap:26px;align-items:center;font-size:14px;color:#55594f}
-    .links a:hover,.links a.active{color:var(--ink)}
-    .links a.active{font-weight:700}
-    .nav-cta{background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700}
-    main{padding:42px 0 60px}
-    .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:#5f7d37}
-    h1{font:600 clamp(32px,5vw,48px)/1.06 "Space Grotesk",sans-serif;letter-spacing:-1.8px;margin:12px 0}
-    .intro{color:var(--muted);font-size:15px;line-height:1.7;max-width:650px;margin:0}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:28px 0 16px}
-    .live-pill{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;background:var(--soft);border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:700}
-    .dot{width:8px;height:8px;border-radius:50%;background:#70b84c;box-shadow:0 0 0 4px #70b84c20}
-    .refresh{border:1px solid #dfe2d9;background:white;border-radius:10px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer}
-    .refresh:hover{background:var(--soft)}
-    .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:stretch}
-    .map-card,.side-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
-    .card-head{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
-    .card-head h2{font:600 16px "Space Grotesk",sans-serif;margin:0}
-    .small-label{font-size:11px;color:var(--muted)}
-    #dynamicMap{height:490px;width:100%;background:#eef1e9;z-index:1}
-    .map-legend{display:flex;gap:15px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line);font-size:12px;color:#53574e}
-    .legend-item{display:flex;align-items:center;gap:7px}
-    .legend-dot{width:9px;height:9px;border-radius:50%}
-    .side-stack{display:grid;gap:16px;grid-template-rows:auto 1fr}
-    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:15px}
-    .stat{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--soft)}
-    .stat-label{font-size:11px;color:var(--muted);margin-bottom:10px}
-    .stat-value{font:600 30px/1 "Space Grotesk",sans-serif;letter-spacing:-1px}
-    .stat-note{font-size:11px;color:var(--muted);margin-top:8px}
-    .status-card{padding:18px}
-    .status-card h3{font:600 17px "Space Grotesk",sans-serif;margin:0 0 8px}
-    .status-card p{font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 16px}
-    .status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:12px}
-    .status-row strong{font-weight:700}
-    .status-row span{color:var(--muted)}
-    .note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:18px}
-    footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:12px}
-    .leaflet-popup-content-wrapper{border-radius:12px}
-    .popup-title{font-weight:700;margin-bottom:5px}
-    .popup-meta{font-size:12px;color:#60645b}
-    .error{display:none;padding:14px 18px;color:#8b3232;background:#fff3f2;border-top:1px solid #f4d6d3;font-size:13px}
-    @media(max-width:850px){.layout{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr;grid-template-rows:auto}.stats{align-content:start}#dynamicMap{height:420px}}
-    @media(max-width:600px){.wrap{width:min(100% - 28px,1160px)}header{height:66px}.links{gap:13px;font-size:12px}.nav-cta{display:none}.brand{font-size:20px}.links a:nth-child(2){display:none}main{padding:30px 0 42px}.toolbar{margin-top:22px}.side-stack{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#dynamicMap{height:360px}.card-head{padding:14px}.stat{padding:14px}.stat-value{font-size:27px}}
+    :root {
+      --lime: #b7ff42;
+      --lime-soft: #efffd7;
+      --ink: #151713;
+      --muted: #70746b;
+      --line: #e8eae4;
+      --paper: #ffffff;
+      --soft: #f7f8f4;
+      --red: #e34f4f;
+      --orange: #e99a2d;
+      --green: #5c9c46;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #86c925;
+      outline-offset: 3px;
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    header {
+      min-height: 70px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      letter-spacing: -.7px;
+      font-size: 21px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--lime);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+
+    .links {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      font-size: 12px;
+      color: #55594f;
+    }
+
+    .links a:hover,
+    .links a.active {
+      color: var(--ink);
+    }
+
+    .links a.active {
+      font-weight: 700;
+    }
+
+    .nav-cta {
+      background: var(--ink);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    main {
+      padding: 36px 0 45px;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #5f7d37;
+    }
+
+    h1 {
+      font: 600 clamp(32px, 5vw, 46px)/1.08 "Space Grotesk", sans-serif;
+      letter-spacing: -1.8px;
+      margin: 11px 0;
+    }
+
+    .intro {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 600px;
+      margin: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 24px 0 14px;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #70b84c;
+      box-shadow: 0 0 0 4px #70b84c20;
+    }
+
+    .refresh {
+      border: 1px solid #dfe2d9;
+      background: white;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .refresh:hover {
+      background: var(--soft);
+    }
+
+    .refresh:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(240px, .8fr);
+      gap: 15px;
+      align-items: stretch;
+    }
+
+    .map-card,
+    .side-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: white;
+      min-width: 0;
+    }
+
+    .card-head {
+      padding: 15px 17px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-head h2 {
+      font: 600 15px "Space Grotesk", sans-serif;
+      margin: 0;
+    }
+
+    .small-label {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    #dynamicMap {
+      height: 460px;
+      width: 100%;
+      background: #eef1e9;
+      z-index: 1;
+    }
+
+    .map-legend {
+      display: flex;
+      gap: 13px;
+      flex-wrap: wrap;
+      padding: 12px 15px;
+      border-top: 1px solid var(--line);
+      font-size: 10px;
+      color: #53574e;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 15px;
+      align-content: start;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      padding: 13px;
+    }
+
+    .stat {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--soft);
+      min-width: 0;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 9px;
+    }
+
+    .stat-value {
+      font: 600 28px/1 "Space Grotesk", sans-serif;
+      letter-spacing: -1px;
+      overflow-wrap: anywhere;
+    }
+
+    .stat-note {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 7px;
+    }
+
+    .status-card {
+      padding: 17px;
+    }
+
+    .status-card h3 {
+      font: 600 16px "Space Grotesk", sans-serif;
+      margin: 0 0 8px;
+    }
+
+    .status-card p {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 0 13px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+    }
+
+    .status-row strong {
+      font-weight: 700;
+    }
+
+    .status-row span {
+      color: var(--muted);
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 15px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 19px 0;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 11px;
+    }
+
+    .popup-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .popup-meta {
+      font-size: 11px;
+      color: #60645b;
+      line-height: 1.6;
+    }
+
+    .error {
+      display: none;
+      padding: 12px 15px;
+      color: #8b3232;
+      background: #fff3f2;
+      border-top: 1px solid #f4d6d3;
+      font-size: 11px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-stack {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      #dynamicMap {
+        height: 400px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        width: calc(100% - 28px);
+      }
+
+      header {
+        min-height: 62px;
+      }
+
+      .brand {
+        font-size: 19px;
+      }
+
+      .links {
+        gap: 12px;
+        font-size: 11px;
+      }
+
+      .links a:nth-child(2),
+      .nav-cta {
+        display: none;
+      }
+
+      main {
+        padding: 27px 0 32px;
+      }
+
+      h1 {
+        font-size: 34px;
+        letter-spacing: -1.2px;
+      }
+
+      .intro {
+        font-size: 12px;
+      }
+
+      .toolbar {
+        margin-top: 19px;
+      }
+
+      .live-pill {
+        max-width: 100%;
+      }
+
+      #mapStatus {
+        overflow-wrap: anywhere;
+      }
+
+      #dynamicMap {
+        height: 340px;
+      }
+
+      .side-stack {
+        grid-template-columns: 1fr;
+        gap: 11px;
+      }
+
+      .card-head {
+        padding: 13px;
+      }
+
+      .stats {
+        padding: 11px;
+      }
+
+      .stat {
+        padding: 12px;
+      }
+
+      .stat-value {
+        font-size: 25px;
+      }
+
+      .map-legend {
+        gap: 10px;
+        padding: 11px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
+
 <body>
+
 <header>
   <div class="wrap nav">
-    <a class="brand" href="index.html"><span class="brand-mark">N</span>NIGRANI</a>
+    <a class="brand" href="index.html" aria-label="NIGRANI home">
+      <span class="brand-mark">N</span>
+      NIGRANI
+    </a>
+
     <nav class="links" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="report.html">Report</a>
-      <a class="active" href="map.html">Live map</a>
+      <a class="active" href="map.html" aria-current="page">Live map</a>
       <a href="feed.html">Public feed</a>
     </nav>
+
     <a class="nav-cta" href="report.html">＋ Report a hazard</a>
   </div>
 </header>
+
 <main class="wrap">
+
   <div class="eyebrow">Community safety · Map view</div>
+
   <h1>The city, at a glance.</h1>
-  <p class="intro">Explore submitted community reports on the map. Markers appear when a report includes usable location coordinates.</p>
+
+  <p class="intro">
+    Explore submitted reports. Markers appear when reports include valid location coordinates.
+  </p>
+
   <div class="toolbar">
-    <div class="live-pill"><span class="dot"></span><span id="mapStatus">Connecting to reports…</span></div>
-    <button class="refresh" id="refreshMap" type="button">↻ Refresh reports</button>
+    <div class="live-pill">
+      <span class="dot"></span>
+      <span id="mapStatus" aria-live="polite">Connecting to reports…</span>
+    </div>
+
+    <button class="refresh" id="refreshMap" type="button">
+      ↻ Refresh reports
+    </button>
   </div>
+
   <div class="layout">
+
     <section class="map-card" aria-label="Community report map">
-      <div class="card-head"><h2>Report locations</h2><span class="small-label">OpenStreetMap</span></div>
-      <div id="dynamicMap" role="application" aria-label="Map showing submitted reports"></div>
-      <div class="map-legend">
-        <span class="legend-item"><i class="legend-dot" style="background:#e34f4f"></i>Critical / high</span>
-        <span class="legend-item"><i class="legend-dot" style="background:#e99a2d"></i>Medium</span>
-        <span class="legend-item"><i class="legend-dot" style="background:#5c9c46"></i>Low / other</span>
+
+      <div class="card-head">
+        <h2>Report locations</h2>
+        <span class="small-label">OpenStreetMap</span>
       </div>
+
+      <div
+        id="dynamicMap"
+        role="application"
+        aria-label="Map showing submitted reports"
+      ></div>
+
+      <div class="map-legend">
+        <span class="legend-item">
+          <i class="legend-dot" style="background:#e34f4f"></i>
+          Critical / high
+        </span>
+
+        <span class="legend-item">
+          <i class="legend-dot" style="background:#e99a2d"></i>
+          Medium
+        </span>
+
+        <span class="legend-item">
+          <i class="legend-dot" style="background:#5c9c46"></i>
+          Low / other
+        </span>
+      </div>
+
       <div class="error" id="mapError" role="status"></div>
+
     </section>
+
     <aside class="side-stack">
+
       <section class="side-card">
-        <div class="card-head"><h2>Report overview</h2><span class="small-label">From API</span></div>
+        <div class="card-head">
+          <h2>Report overview</h2>
+          <span class="small-label">Live API</span>
+        </div>
+
         <div class="stats">
-          <div class="stat"><div class="stat-label">All reports</div><div class="stat-value" id="statTotal">—</div><div class="stat-note">Submitted reports</div></div>
-          <div class="stat"><div class="stat-label">Critical / high</div><div class="stat-value" id="statCritical">—</div><div class="stat-note">Higher urgency</div></div>
-          <div class="stat"><div class="stat-label">Medium</div><div class="stat-value" id="statMedium">—</div><div class="stat-note">Moderate urgency</div></div>
-          <div class="stat"><div class="stat-label">Low / other</div><div class="stat-value" id="statLow">—</div><div class="stat-note">Other reports</div></div>
+
+          <div class="stat">
+            <div class="stat-label">All reports</div>
+            <div class="stat-value" id="statTotal">—</div>
+            <div class="stat-note">Submitted reports</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Critical / high</div>
+            <div class="stat-value" id="statCritical">—</div>
+            <div class="stat-note">Higher urgency</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Medium</div>
+            <div class="stat-value" id="statMedium">—</div>
+            <div class="stat-note">Moderate urgency</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Low / other</div>
+            <div class="stat-value" id="statLow">—</div>
+            <div class="stat-note">Other reports</div>
+          </div>
+
         </div>
       </section>
+
       <section class="side-card status-card">
-        <h3>What you’re seeing</h3>
-        <p>This map displays reports returned by the NIGRANI backend. It is not a live sensor network, and a marker’s absence does not mean an area is hazard-free.</p>
-        <div class="status-row"><strong>Mapped reports</strong><span id="mappedCount">—</span></div>
-        <div class="status-row"><strong>Last refreshed</strong><span id="lastUpdated">Not yet</span></div>
-        <div class="status-row"><strong>Map data</strong><span>OpenStreetMap</span></div>
+
+        <h3>Map information</h3>
+
+        <p>
+          This map shows reports returned by NIGRANI's backend.
+          Missing markers don't mean an area is hazard-free.
+        </p>
+
+        <div class="status-row">
+          <strong>Mapped reports</strong>
+          <span id="mappedCount">—</span>
+        </div>
+
+        <div class="status-row">
+          <strong>Last refreshed</strong>
+          <span id="lastUpdated">Not yet</span>
+        </div>
+
+        <div class="status-row">
+          <strong>Map data</strong>
+          <span>OpenStreetMap</span>
+        </div>
+
       </section>
+
     </aside>
+
   </div>
-  <p class="note">Map tiles © OpenStreetMap contributors. Report locations are shown only when the backend provides valid latitude and longitude values.</p>
+
+  <p class="note">
+    Map tiles © OpenStreetMap contributors. Locations are shown only when valid coordinates are available.
+  </p>
+
 </main>
-<footer><div class="wrap">NIGRANI · Civic intelligence for safer streets.</div></footer>
+
+<footer>
+  <div class="wrap">
+    NIGRANI · Civic intelligence for safer streets.
+  </div>
+</footer>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
 (() => {
-  const API_BASE_URL = window.NIGRANI_API_BASE_URL ||
+  'use strict';
+
+  const API_BASE_URL =
+    window.NIGRANI_API_BASE_URL ||
     localStorage.getItem('NIGRANI_API_BASE_URL') ||
     'https://nigrani-eg4p.onrender.com/api/reports';
 
   const mapStatus = document.getElementById('mapStatus');
   const errorBox = document.getElementById('mapError');
-  const map = L.map('dynamicMap').setView([28.5921, 77.0460], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+  const refreshButton = document.getElementById('refreshMap');
+
+  const map = L.map('dynamicMap').setView(
+    [28.5921, 77.0460],
+    12
+  );
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }
+  ).addTo(map);
 
   const markers = L.layerGroup().addTo(map);
-  const norm = value => String(value ?? '').trim().toLowerCase();
-  const pick = (obj, keys) => {
-    for (const key of keys) if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key];
+
+  function normalize(value) {
+    return String(value ?? '').trim().toLowerCase();
+  }
+
+  function pick(object, keys) {
+    for (const key of keys) {
+      const value = object?.[key];
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        value !== ''
+      ) {
+        return value;
+      }
+    }
+
     return null;
-  };
-  const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function safeText(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[char]);
+  }
+
   function urgencyOf(report) {
-    const raw = norm(pick(report, ['urgency','severity','priority','risk_level','level']));
-    if (raw.includes('critical') || raw.includes('high') || raw.includes('severe')) return 'high';
-    if (raw.includes('medium') || raw.includes('moderate')) return 'medium';
-    if (raw.includes('low')) return 'low';
+    const raw = normalize(
+      pick(report, [
+        'urgency',
+        'severity',
+        'priority',
+        'risk_level',
+        'level'
+      ])
+    );
+
+    if (
+      raw.includes('critical') ||
+      raw.includes('high') ||
+      raw.includes('severe')
+    ) {
+      return 'high';
+    }
+
+    if (
+      raw.includes('medium') ||
+      raw.includes('moderate')
+    ) {
+      return 'medium';
+    }
+
     return 'low';
   }
+
   function titleOf(report) {
-    const violations = pick(report, ['violations','hazards','detected_violations']);
+    const violations = pick(report, [
+      'violations',
+      'hazards',
+      'detected_violations'
+    ]);
+
     if (Array.isArray(violations) && violations.length) {
       const first = violations[0];
-      return typeof first === 'string' ? first : pick(first, ['title','name','type','description']) || 'Community safety report';
+
+      if (typeof first === 'string') {
+        return first;
+      }
+
+      return pick(first, [
+        'category',
+        'title',
+        'name',
+        'type',
+        'detail',
+        'description'
+      ]) || 'Community safety report';
     }
-    return pick(report, ['title','complaint_draft','description','message']) || 'Community safety report';
+
+    return pick(report, [
+      'title',
+      'complaint_draft',
+      'description',
+      'message'
+    ]) || 'Community safety report';
   }
+
   function coordinatesOf(report) {
-    const lat = Number(pick(report, ['latitude','lat']));
-    const lng = Number(pick(report, ['longitude','lng','lon','long']));
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
-    if (pick(report, ['latitude','lat']) === null || pick(report, ['longitude','lng','lon','long']) === null) return null;
-    return [lat,lng];
+    const rawLat = pick(report, ['latitude', 'lat']);
+    const rawLng = pick(report, [
+      'longitude',
+      'lng',
+      'lon',
+      'long'
+    ]);
+
+    if (rawLat === null || rawLng === null) {
+      return null;
+    }
+
+    const lat = Number(rawLat);
+    const lng = Number(rawLng);
+
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      Math.abs(lat) > 90 ||
+      Math.abs(lng) > 180
+    ) {
+      return null;
+    }
+
+    // Avoid mapping coordinates that are effectively zero.
+    if (lat === 0 && lng === 0) {
+      return null;
+    }
+
+    return [lat, lng];
   }
-  function markerColor(level) { return level === 'high' ? '#e34f4f' : level === 'medium' ? '#e99a2d' : '#5c9c46'; }
+
+  function markerColor(level) {
+    if (level === 'high') return '#e34f4f';
+    if (level === 'medium') return '#e99a2d';
+    return '#5c9c46';
+  }
+
   function makeIcon(level) {
     return L.divIcon({
       className: '',
-      html: `<div style="width:16px;height:16px;border:3px solid #fff;border-radius:50%;background:${markerColor(level)};box-shadow:0 1px 7px #0004"></div>`,
-      iconSize: [16,16], iconAnchor: [8,8], popupAnchor: [0,-8]
+      html: `
+        <div style="
+          width:16px;
+          height:16px;
+          border:3px solid #fff;
+          border-radius:50%;
+          background:${markerColor(level)};
+          box-shadow:0 1px 7px #0004;
+        "></div>
+      `,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+      popupAnchor: [0, -8]
     });
   }
+
+  function formatDate(value) {
+    if (!value) return '';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
+
+    return date.toLocaleString([], {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+  }
+
   async function refreshReports() {
+    refreshButton.disabled = true;
     mapStatus.textContent = 'Refreshing reports…';
     errorBox.style.display = 'none';
-    try {
-      const response = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/`, {headers:{'Accept':'application/json'}});
-      if (!response.ok) throw new Error(`Server returned ${response.status}`);
-      const payload = await response.json();
-      const reports = Array.isArray(payload) ? payload : (payload.results || payload.reports || payload.data || []);
-      if (!Array.isArray(reports)) throw new Error('The API response did not contain a report list.');
 
-      let high = 0, medium = 0, low = 0, mapped = 0;
+    try {
+      const response = await fetch(
+        `${API_BASE_URL.replace(/\/+$/, '')}/`,
+        {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
+      const payload = await response.json();
+
+      const reports = Array.isArray(payload)
+        ? payload
+        : (
+            payload.results ||
+            payload.reports ||
+            payload.data ||
+            []
+          );
+
+      if (!Array.isArray(reports)) {
+        throw new Error('The API did not return a report list.');
+      }
+
+      let high = 0;
+      let medium = 0;
+      let low = 0;
+      let mapped = 0;
+
       markers.clearLayers();
+
       const bounds = [];
+
       reports.forEach(report => {
         const level = urgencyOf(report);
-        if (level === 'high') high++; else if (level === 'medium') medium++; else low++;
-        const coords = coordinatesOf(report);
-        if (!coords) return;
+
+        if (level === 'high') {
+          high++;
+        } else if (level === 'medium') {
+          medium++;
+        } else {
+          low++;
+        }
+
+        const coordinates = coordinatesOf(report);
+
+        if (!coordinates) return;
+
         mapped++;
-        const marker = L.marker(coords, {icon:makeIcon(level)});
-        const date = pick(report, ['created_at','timestamp','date','reported_at']);
-        const popup = `<div class="popup-title">${safeText(titleOf(report))}</div><div class="popup-meta">Urgency: ${safeText(level)}${date ? `<br>Reported: ${safeText(date)}` : ''}</div>`;
+
+        const marker = L.marker(
+          coordinates,
+          { icon: makeIcon(level) }
+        );
+
+        const date = formatDate(
+          pick(report, [
+            'created_at',
+            'timestamp',
+            'date',
+            'reported_at'
+          ])
+        );
+
+        const popup = `
+          <div class="popup-title">
+            ${safeText(titleOf(report))}
+          </div>
+
+          <div class="popup-meta">
+            Urgency: ${safeText(level)}
+            ${date ? `<br>Reported: ${safeText(date)}` : ''}
+          </div>
+        `;
+
         marker.bindPopup(popup);
         markers.addLayer(marker);
-        bounds.push(coords);
+        bounds.push(coordinates);
       });
-      document.getElementById('statTotal').textContent = reports.length;
-      document.getElementById('statCritical').textContent = high;
-      document.getElementById('statMedium').textContent = medium;
-      document.getElementById('statLow').textContent = low;
-      document.getElementById('mappedCount').textContent = mapped;
-      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-      mapStatus.textContent = `${reports.length} report${reports.length === 1 ? '' : 's'} loaded`;
-      if (bounds.length > 0) map.fitBounds(bounds, {padding:[35,35], maxZoom:14});
-      else map.setView([28.5921,77.0460],12);
+
+      document.getElementById('statTotal').textContent =
+        reports.length;
+
+      document.getElementById('statCritical').textContent =
+        high;
+
+      document.getElementById('statMedium').textContent =
+        medium;
+
+      document.getElementById('statLow').textContent =
+        low;
+
+      document.getElementById('mappedCount').textContent =
+        mapped;
+
+      document.getElementById('lastUpdated').textContent =
+        new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+      mapStatus.textContent =
+        `${reports.length} report${reports.length === 1 ? '' : 's'} loaded`;
+
+      if (bounds.length) {
+        map.fitBounds(bounds, {
+          padding: [30, 30],
+          maxZoom: 14
+        });
+      } else {
+        map.setView([28.5921, 77.0460], 12);
+      }
+
       if (!mapped && reports.length) {
-        errorBox.textContent = 'Reports loaded, but none currently include usable map coordinates.';
+        errorBox.textContent =
+          'Reports loaded, but none include usable map coordinates.';
+
+        errorBox.style.display = 'block';
+      } else if (!reports.length) {
+        errorBox.textContent =
+          'No reports are available yet. New reports will appear here after submission.';
+
         errorBox.style.display = 'block';
       }
+
     } catch (error) {
-      console.error('Could not load NIGRANI reports:', error);
+      console.error('NIGRANI map error:', error);
+
       mapStatus.textContent = 'Could not load reports';
-      errorBox.textContent = 'Could not load reports from the backend. Check your internet connection or try refreshing in a moment.';
+
+      errorBox.textContent =
+        'Could not load reports. Check your connection or try refreshing again.';
+
       errorBox.style.display = 'block';
+
+    } finally {
+      refreshButton.disabled = false;
     }
   }
-  document.getElementById('refreshMap').addEventListener('click', refreshReports);
+
+  refreshButton.addEventListener('click', refreshReports);
+
+  // Handle map resizing on phones and when the viewport changes.
+  window.addEventListener('resize', () => {
+    map.invalidateSize();
+  });
+
   refreshReports();
 })();
 </script>
+
 </body>
 </html>
