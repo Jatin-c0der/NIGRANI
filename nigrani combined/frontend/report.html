@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#f7f8f4">
   <meta name="description" content="Report public safety concerns with NIGRANI.">
   <title>NIGRANI — Report an Issue</title>
 
@@ -13,12 +13,12 @@
 
   <style>
     :root {
-      --lime: #B7FF42;
+      --lime: #b7ff42;
       --lime-soft: #efffd7;
       --ink: #10120e;
-      --muted: #6b7065;
-      --line: #e6e9e1;
-      --paper: #ffffff;
+      --muted: #72776c;
+      --line: #e5e8df;
+      --paper: #fff;
       --wash: #f7f8f4;
       --red: #c23e35;
       --sans: "DM Sans", sans-serif;
@@ -26,8 +26,6 @@
     }
 
     * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -56,72 +54,79 @@
     }
 
     .shell {
-      width: min(1080px, calc(100% - 36px));
+      width: min(1120px, calc(100% - 40px));
       margin: auto;
     }
 
+    /* Navigation */
+
     .topbar {
-      min-height: 68px;
+      min-height: 66px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 18px;
       border-bottom: 1px solid var(--line);
       background: var(--paper);
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 9px;
-      font: 700 16px var(--display);
-      letter-spacing: -.04em;
+      gap: 10px;
+      font: 700 18px var(--display);
+      letter-spacing: -.05em;
     }
 
     .brand-mark {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
+      border-radius: 10px;
       background: var(--lime);
-      border-radius: 9px;
+      font-size: 17px;
     }
 
     .navlinks {
       display: flex;
       align-items: center;
-      gap: 22px;
-      font-size: 12px;
-      font-weight: 600;
+      gap: 25px;
       color: #555b50;
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .navlinks a.active { color: var(--ink); }
-
-    .navlinks a.active::after {
-      content: "";
-      display: block;
-      height: 3px;
-      margin-top: 5px;
-      border-radius: 4px;
-      background: var(--lime);
+    .navlinks a {
+      padding: 7px 0;
     }
 
-    .page { padding: 35px 0 50px; }
+    .navlinks a.active {
+      color: var(--ink);
+      border-bottom: 3px solid var(--lime);
+    }
+
+    /* Page heading */
+
+    .page {
+      padding: 29px 0 42px;
+    }
 
     .back {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 19px;
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
     }
 
+    .back:hover { color: var(--ink); }
+
     .intro {
       display: flex;
-      align-items: end;
+      align-items: flex-end;
       justify-content: space-between;
-      gap: 24px;
+      gap: 25px;
       margin-bottom: 24px;
     }
 
@@ -129,55 +134,59 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       color: var(--muted);
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: .12em;
+      letter-spacing: .13em;
       text-transform: uppercase;
     }
 
     .eyebrow i {
       width: 19px;
       height: 3px;
-      border-radius: 4px;
+      border-radius: 5px;
       background: var(--lime);
     }
 
     h1 {
       margin: 0;
-      font: 600 clamp(32px, 5vw, 46px)/1.08 var(--display);
-      letter-spacing: -.055em;
+      font: 600 clamp(34px, 4.3vw, 46px)/1.08 var(--display);
+      letter-spacing: -.06em;
     }
 
-    .intro p {
-      max-width: 300px;
-      margin: 0;
+    .intro-copy {
+      max-width: 285px;
+      margin: 0 0 3px;
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.65;
+      line-height: 1.7;
     }
+
+    /* Main layout */
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(250px, .85fr);
+      grid-template-columns: minmax(0, 1.2fr) minmax(265px, .8fr);
       align-items: start;
-      gap: 18px;
+      gap: 17px;
     }
 
     .panel {
+      min-width: 0;
       overflow: hidden;
       border: 1px solid var(--line);
-      border-radius: 17px;
+      border-radius: 16px;
       background: var(--paper);
     }
 
     .panel-head {
+      min-height: 55px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 16px 19px;
+      gap: 12px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--line);
     }
 
@@ -190,42 +199,45 @@
 
     .step-tag {
       padding: 6px 9px;
-      border-radius: 99px;
+      border-radius: 20px;
       background: var(--lime-soft);
-      color: #476d19;
+      color: #466b19;
       font-size: 9px;
       font-weight: 700;
       white-space: nowrap;
     }
 
-    .panel-body { padding: 19px; }
+    .panel-body { padding: 17px; }
+
+    /* Camera */
 
     .camera-box {
       position: relative;
+      min-height: 230px;
       display: grid;
       place-items: center;
-      min-height: 230px;
       overflow: hidden;
       border: 1px dashed #cdd3c5;
       border-radius: 13px;
-      background: #f8faf5;
+      background:
+        radial-gradient(ellipse at center, #ffffff 0%, #f7f9f3 75%);
+    }
+
+    #camera,
+    #canvas {
+      display: none;
+      width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+      background: #10120e;
     }
 
     #camera {
-      display: none;
-      width: 100%;
-      max-height: 390px;
       aspect-ratio: 4 / 3;
-      object-fit: contain;
-      background: #10120e;
     }
 
     #canvas {
-      display: none;
-      max-width: 100%;
-      max-height: 390px;
-      object-fit: contain;
-      background: #10120e;
+      height: auto;
     }
 
     .camera-placeholder {
@@ -234,81 +246,90 @@
     }
 
     .camera-symbol {
-      display: grid;
-      place-items: center;
       width: 48px;
       height: 48px;
-      margin: 0 auto 12px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 13px;
       border-radius: 14px;
       background: var(--lime);
-      font-size: 23px;
+      font-size: 22px;
     }
 
     .camera-placeholder h3 {
       margin: 0 0 6px;
-      font: 600 16px var(--display);
+      font: 600 17px var(--display);
     }
 
     .camera-placeholder p {
-      max-width: 260px;
+      max-width: 265px;
       margin: auto;
       color: var(--muted);
       font-size: 11px;
-      line-height: 1.55;
+      line-height: 1.6;
     }
 
     .camera-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 9px;
-      margin-top: 12px;
+      margin-top: 11px;
     }
 
+    /* Buttons */
+
     .btn {
-      min-height: 43px;
+      min-height: 42px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0 14px;
+      padding: 0 13px;
       border: 1px solid var(--line);
-      border-radius: 99px;
+      border-radius: 10px;
       background: white;
       color: var(--ink);
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      transition: background .15s, border-color .15s;
+      transition: background .15s, border-color .15s, transform .15s;
     }
 
-    .btn:hover { border-color: #c8cec0; }
+    .btn:hover:not(:disabled) {
+      border-color: #c4cbbb;
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(.99);
+    }
 
     .btn.primary {
       border-color: var(--lime);
       background: var(--lime);
+      color: #10120e;
     }
 
-    .btn.primary:hover { background: #a9f02e; }
-
-    .btn.dark {
-      border-color: var(--ink);
-      background: var(--ink);
-      color: white;
+    .btn.primary:hover:not(:disabled) {
+      background: #a8f02e;
     }
 
     .btn:disabled {
-      opacity: .5;
+      opacity: .48;
       cursor: not-allowed;
     }
 
     .full { width: 100%; }
+
+    #retakePhoto { margin-top: 9px; }
+
+    /* Form fields */
 
     .field { margin-top: 19px; }
 
     .field label {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 8px;
       font-size: 12px;
       font-weight: 700;
@@ -323,25 +344,33 @@
     textarea {
       display: block;
       width: 100%;
-      min-height: 75px;
+      min-height: 82px;
       resize: vertical;
-      padding: 12px;
+      padding: 12px 13px;
       border: 1px solid #dfe4d9;
-      border-radius: 11px;
+      border-radius: 10px;
       background: white;
       color: var(--ink);
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1.6;
+      transition: border-color .15s;
+    }
+
+    textarea:focus {
+      border-color: #9bce4d;
+      outline: none;
     }
 
     textarea::placeholder { color: #9a9f94; }
 
     .field-hint {
-      margin: 7px 0 0;
+      margin: 6px 0 0;
       color: #858b7f;
       font-size: 10px;
       line-height: 1.5;
     }
+
+    /* Location */
 
     .location-row {
       display: flex;
@@ -349,24 +378,26 @@
       gap: 10px;
       margin-top: 15px;
       padding: 11px;
+      border: 1px solid #ecefe6;
       border-radius: 11px;
-      background: var(--wash);
+      background: #fafbf8;
     }
 
     .location-icon {
-      flex: 0 0 32px;
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
-      width: 32px;
-      height: 32px;
       border: 1px solid var(--line);
       border-radius: 9px;
       background: white;
+      font-size: 16px;
     }
 
     .location-copy {
-      min-width: 0;
       flex: 1;
+      min-width: 0;
     }
 
     .location-copy b {
@@ -379,36 +410,39 @@
       margin-top: 3px;
       color: var(--muted);
       font-size: 10px;
+      line-height: 1.5;
       overflow-wrap: anywhere;
     }
 
     .location-row .btn {
-      min-height: 35px;
-      padding: 0 11px;
+      min-height: 34px;
+      padding: 0 10px;
       font-size: 10px;
       white-space: nowrap;
     }
 
     .analyze-button { margin-top: 13px; }
 
+    /* Results and status */
+
     #analysisResult {
       display: none;
-      margin-top: 15px;
-      padding: 14px;
+      margin-top: 14px;
+      padding: 15px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: #fbfcf8;
+      background: #fafcf6;
     }
 
     #analysisResult h3 {
-      margin: 0 0 9px;
-      font: 600 14px var(--display);
+      margin: 0 0 10px;
+      font: 600 15px var(--display);
     }
 
     #analysisText {
       color: #4e5547;
       font-size: 12px;
-      line-height: 1.6;
+      line-height: 1.7;
       overflow-wrap: anywhere;
     }
 
@@ -417,7 +451,7 @@
       margin: 8px 0;
     }
 
-    #analysisText li { margin: 4px 0; }
+    #analysisText li { margin: 5px 0; }
 
     #sendReport { margin-top: 12px; }
 
@@ -425,54 +459,59 @@
       display: none;
       margin-top: 12px;
       padding: 11px 12px;
+      border: 1px solid #e3edce;
       border-radius: 10px;
-      background: var(--lime-soft);
-      color: #3e6414;
+      background: #f5ffe7;
+      color: #45691c;
       font-size: 11px;
-      line-height: 1.55;
+      line-height: 1.6;
       overflow-wrap: anywhere;
     }
 
     #statusMessage.error {
-      background: #fff0ef;
+      border-color: #f0d4d1;
+      background: #fff2f0;
       color: var(--red);
     }
 
+    /* Right-hand guidance */
+
     .side-stack {
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
 
     .info-card { padding: 18px; }
 
-    .info-card h2 { margin-bottom: 15px; }
+    .info-card h2 { margin-bottom: 17px; }
 
     .info-list {
       display: grid;
-      gap: 15px;
+      gap: 16px;
     }
 
     .info-item {
       display: grid;
-      grid-template-columns: 30px 1fr;
+      grid-template-columns: 34px 1fr;
       align-items: start;
       gap: 10px;
     }
 
     .info-icon {
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 9px;
+      border-radius: 10px;
       background: var(--lime-soft);
+      color: #263b12;
       font-size: 10px;
       font-weight: 700;
     }
 
     .info-item b {
       display: block;
-      margin: 1px 0 4px;
+      margin: 2px 0 4px;
       font-size: 11px;
     }
 
@@ -480,17 +519,17 @@
       margin: 0;
       color: var(--muted);
       font-size: 10px;
-      line-height: 1.55;
+      line-height: 1.65;
     }
 
     .notice {
-      padding: 13px;
-      border: 1px solid #e8eddc;
+      padding: 13px 14px;
+      border: 1px solid #e7ebdd;
       border-radius: 12px;
-      background: #fbfdf7;
-      color: #666d5c;
+      background: #fbfcf8;
+      color: #687060;
       font-size: 10px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .notice strong { color: var(--ink); }
@@ -499,10 +538,12 @@
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 20px 0 25px;
+      padding: 18px 0 24px;
       color: #7c8276;
       font-size: 10px;
     }
+
+    .footer a:hover { color: var(--ink); }
 
     .loading {
       display: inline-flex;
@@ -523,16 +564,18 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Tablet and mobile */
+
     @media (max-width: 760px) {
       .shell { width: calc(100% - 28px); }
 
-      .topbar { min-height: 62px; }
+      .topbar { min-height: 61px; }
 
-      .navlinks { gap: 12px; }
+      .navlinks { gap: 13px; }
 
       .navlinks a:not(.active) { display: none; }
 
-      .page { padding: 25px 0 30px; }
+      .page { padding: 23px 0 28px; }
 
       .back { margin-bottom: 15px; }
 
@@ -543,52 +586,67 @@
 
       h1 { font-size: 35px; }
 
-      .intro p {
+      .intro-copy {
+        max-width: 380px;
         margin-top: 9px;
         font-size: 11px;
       }
 
-      .layout { grid-template-columns: 1fr; }
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+      }
 
-      .panel-head { padding: 14px 15px; }
+      .panel-head { padding: 13px 15px; }
 
       .panel-body { padding: 14px; }
 
-      .camera-box { min-height: 200px; }
+      .camera-box { min-height: 205px; }
+
+      #camera, #canvas { max-height: 360px; }
 
       .side-stack { gap: 10px; }
 
       .info-card { padding: 15px; }
 
-      .info-list { gap: 11px; }
+      .info-card h2 { margin-bottom: 13px; }
 
-      .notice { padding: 11px; }
+      .info-list { gap: 12px; }
 
-      .footer {
-        flex-direction: column;
-        padding-top: 17px;
-      }
+      .notice { padding: 11px 12px; }
+
+      .footer { padding-top: 15px; }
     }
 
     @media (max-width: 390px) {
-      .camera-actions { grid-template-columns: 1fr 1fr; }
+      .shell { width: calc(100% - 22px); }
 
-      .location-row { flex-wrap: wrap; }
+      .brand { font-size: 16px; }
 
-      .location-copy { flex-basis: calc(100% - 52px); }
-
-      .location-row .btn { margin-left: 42px; }
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+      }
 
       h1 { font-size: 32px; }
 
-      .step-tag { font-size: 8px; }
+      .camera-box { min-height: 185px; }
+
+      .camera-actions { gap: 7px; }
+
+      .btn { padding: 0 9px; }
+
+      .location-row { flex-wrap: wrap; }
+
+      .location-copy { flex-basis: calc(100% - 54px); }
+
+      .location-row .btn { margin-left: 44px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .01ms !important;
         transition-duration: .01ms !important;
-        scroll-behavior: auto !important;
       }
     }
   </style>
@@ -597,7 +655,7 @@
 <body>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" href="index.html">
+      <a class="brand" href="index.html" aria-label="NIGRANI home">
         <span class="brand-mark">N</span>
         <span>NIGRANI</span>
       </a>
@@ -613,19 +671,21 @@
     <main class="page">
       <a class="back" href="index.html">← Back to home</a>
 
-      <div class="intro">
+      <section class="intro">
         <div>
           <div class="eyebrow"><i></i> Citizen reporting</div>
           <h1>Make a report.</h1>
         </div>
 
-        <p>Capture a safety issue, review the findings, and submit when ready.</p>
-      </div>
+        <p class="intro-copy">
+          Capture a safety issue, review the findings, and submit when ready.
+        </p>
+      </section>
 
       <div class="layout">
-        <section class="panel">
+        <section class="panel" aria-labelledby="reportHeading">
           <div class="panel-head">
-            <h2>Report details</h2>
+            <h2 id="reportHeading">Report details</h2>
             <span class="step-tag">STEP 1 OF 2</span>
           </div>
 
@@ -634,13 +694,15 @@
               <div class="camera-placeholder" id="cameraPlaceholder">
                 <div class="camera-symbol" aria-hidden="true">⌁</div>
                 <h3>Capture the issue</h3>
-                <p>Use your device camera. Gallery uploads aren't supported.</p>
+                <p>
+                  Use your device camera. Gallery uploads aren't supported.
+                </p>
               </div>
 
               <video id="camera" autoplay playsinline
                 aria-label="Live camera preview"></video>
 
-              <canvas id="canvas"></canvas>
+              <canvas id="canvas" aria-label="Captured photo preview"></canvas>
             </div>
 
             <div class="camera-actions">
@@ -654,14 +716,14 @@
             </div>
 
             <button class="btn full" id="retakePhoto" type="button"
-              style="display:none; margin-top:9px;">
+              style="display:none">
               Retake photo
             </button>
 
             <div class="field">
               <label for="complaintDescription">
                 What did you notice?
-                <span class="optional">Optional</span>
+                <span class="optional">Optional · 500 characters max</span>
               </label>
 
               <textarea id="complaintDescription" maxlength="500"
@@ -737,8 +799,8 @@
 
           <div class="notice">
             <strong>Stay safe.</strong>
-            Don't put yourself at risk to capture a photo. AI findings may be incorrect.
-            Contact emergency services directly for urgent threats.
+            Don't put yourself at risk to capture a photo. AI findings may be
+            incorrect. Contact emergency services directly for urgent threats.
           </div>
 
           <div class="notice">
@@ -788,8 +850,7 @@
       let analysisToken = null;
       let busy = false;
 
-      document.getElementById('year').textContent =
-        new Date().getFullYear();
+      document.getElementById('year').textContent = new Date().getFullYear();
 
       function showStatus(message, isError = false) {
         status.textContent = message;
@@ -857,9 +918,7 @@
             const category = item.category || item.type || '';
             const detail = item.detail || item.description || item.name || '';
 
-            return [category, detail]
-              .filter(Boolean)
-              .join(': ');
+            return [category, detail].filter(Boolean).join(': ');
           }
 
           return '';
@@ -870,21 +929,18 @@
         if (busy) return;
 
         clearStatus();
-
-        if (!navigator.mediaDevices?.getUserMedia) {
-          showStatus(
-            'Camera access is unavailable. Open this page over HTTPS in a supported browser.',
-            true
-          );
-          return;
-        }
-
-        stopCamera();
-
         startBtn.disabled = true;
         startBtn.textContent = 'Starting camera…';
 
         try {
+          if (!navigator.mediaDevices?.getUserMedia) {
+            throw new Error(
+              'Camera access is unavailable. Open this page over HTTPS in a supported browser.'
+            );
+          }
+
+          stopCamera();
+
           stream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: { ideal: 'environment' } },
             audio: false
@@ -894,6 +950,8 @@
           camera.style.display = 'block';
           canvas.style.display = 'none';
           placeholder.style.display = 'none';
+
+          await camera.play();
 
           captureBtn.disabled = false;
           startBtn.textContent = 'Camera ready';
@@ -905,9 +963,10 @@
           stopCamera();
 
           showStatus(
-            error.name === 'NotAllowedError'
+            error.message ||
+            (error.name === 'NotAllowedError'
               ? 'Camera permission denied. Allow camera access and try again.'
-              : 'Could not start the camera. Check your browser permissions.',
+              : 'Could not start the camera. Check your browser permissions.'),
             true
           );
 
@@ -942,7 +1001,6 @@
           }
 
           photoBlob = blob;
-
           stopCamera();
 
           camera.style.display = 'none';
@@ -958,6 +1016,8 @@
       });
 
       retakeBtn.addEventListener('click', () => {
+        if (busy) return;
+
         photoBlob = null;
         canvas.style.display = 'none';
         camera.style.display = 'none';
@@ -968,7 +1028,6 @@
 
         resetAnalysis();
         clearStatus();
-
         startBtn.click();
       });
 
@@ -1023,13 +1082,6 @@
           return;
         }
 
-        const description = descriptionInput.value.trim();
-
-        if (description.length > 500) {
-          showStatus('Keep the description under 500 characters.', true);
-          return;
-        }
-
         clearStatus();
         resetAnalysis();
 
@@ -1040,8 +1092,9 @@
 
         try {
           const form = new FormData();
-
           form.append('image', photoBlob, 'nigrani-capture.jpg');
+
+          const description = descriptionInput.value.trim();
 
           if (description) {
             form.append('description', description);
@@ -1062,7 +1115,6 @@
             );
           }
 
-          // The backend's analysis token is required by /send/.
           analysisToken = data.analysis_token || null;
 
           const violations = formatViolations(data.violations);
@@ -1095,28 +1147,23 @@
           analysisText.innerHTML = markup;
           result.style.display = 'block';
 
-          if (violations.length && analysisToken) {
+          if (analysisToken) {
             sendBtn.style.display = 'inline-flex';
 
             showStatus(
-              'Review the findings. Submit only if the report is accurate.',
+              'Review the findings carefully. Submit only if the report is accurate.',
               false
             );
-          } else if (!violations.length) {
-            analysisToken = null;
+          } else {
+            sendBtn.style.display = 'none';
 
             showStatus(
-              'No clear safety hazard was detected. You can retake the photo.',
-              true
-            );
-          } else {
-            showStatus(
-              'The analysis token was missing. Please try analyzing the photo again.',
+              'The analysis token was missing. Please check the backend response or try again.',
               true
             );
           }
 
-          analyzeBtn.textContent = 'Analyze again';
+          analyzeBtn.textContent = 'Analyze again →';
           result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
         } catch (error) {
@@ -1128,7 +1175,6 @@
           );
 
           analyzeBtn.textContent = 'Try analysis again →';
-
         } finally {
           busy = false;
           analyzeBtn.disabled = !photoBlob;
@@ -1144,7 +1190,6 @@
         }
 
         clearStatus();
-
         busy = true;
         sendBtn.disabled = true;
         analyzeBtn.disabled = true;
@@ -1156,8 +1201,6 @@
           const form = new FormData();
 
           form.append('image', photoBlob, 'nigrani-capture.jpg');
-
-          // Correct field expected by the backend.
           form.append('analysis_token', analysisToken);
 
           if (latitude !== null && longitude !== null) {
@@ -1221,7 +1264,6 @@
           );
 
           sendBtn.textContent = 'Try submission again';
-
         } finally {
           busy = false;
           sendBtn.disabled = false;
