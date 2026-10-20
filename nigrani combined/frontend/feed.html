@@ -1,43 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Browse community safety reports submitted through NIGRANI.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Public Feed | NIGRANI</title>
 
-  <title>Public Feed — NIGRANI</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     :root {
-      --lime: #B7FF42;
-      --lime-soft: #efffd7;
-      --ink: #151713;
-      --muted: #6b7065;
-      --line: #e6e9e1;
-      --paper: #ffffff;
-      --wash: #f8f9f6;
-      --red: #c8423c;
-      --orange: #a9650a;
-      --green: #4c7e36;
-      --sans: "DM Sans", system-ui, sans-serif;
-      --display: "Space Grotesk", system-ui, sans-serif;
+      --lime: #b7ff42;
+      --black: #11120f;
+      --white: #ffffff;
+      --bg: #f7f8f5;
+      --muted: #74776f;
+      --border: #e5e7e0;
+      --card: #ffffff;
+      --green: #287b38;
+      --orange: #b96913;
+      --red: #d43a36;
+      --shadow: 0 8px 28px rgba(20, 25, 15, 0.045);
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--black);
+      font-family: "DM Sans", sans-serif;
       -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    a {
+      font: inherit;
     }
 
     a {
@@ -46,202 +55,272 @@
     }
 
     button {
-      font: inherit;
-    }
-
-    button:focus-visible,
-    a:focus-visible {
-      outline: 3px solid #86c925;
-      outline-offset: 3px;
+      cursor: pointer;
     }
 
     .shell {
-      width: min(1050px, calc(100% - 40px));
+      width: min(1100px, calc(100% - 40px));
       margin: 0 auto;
     }
 
     /* Navigation */
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-inner {
       min-height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      border-bottom: 1px solid var(--line);
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
-      font: 700 16px var(--display);
-      letter-spacing: -0.4px;
+      gap: 10px;
+      flex-shrink: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
     }
 
     .brand-mark {
-      width: 31px;
-      height: 31px;
+      width: 30px;
+      height: 30px;
       display: grid;
       place-items: center;
-      border-radius: 9px;
       background: var(--lime);
-      font: 700 16px var(--display);
+      border-radius: 9px;
+      font-size: 17px;
     }
 
-    .navlinks {
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 23px;
-      color: #50554b;
-      font-size: 12px;
+      gap: 24px;
+      color: #62655d;
+      font-size: 13px;
       font-weight: 600;
     }
 
-    .navlinks a:hover,
-    .navlinks a.active {
-      color: #111;
+    .nav-links a {
+      transition: color 0.2s;
     }
 
-    .navlinks a.active {
-      font-weight: 700;
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--black);
+    }
+
+    .nav-links a.active {
+      text-decoration: underline;
+      text-decoration-color: var(--lime);
+      text-decoration-thickness: 3px;
+      text-underline-offset: 7px;
     }
 
     .nav-cta {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 38px;
-      padding: 0 15px;
-      border-radius: 999px;
-      background: var(--ink);
+      padding: 10px 15px;
+      background: var(--black);
       color: white !important;
+      border-radius: 9px;
     }
 
     .nav-cta:hover {
-      background: #30352b;
+      background: #30322c;
     }
 
-    /* Page heading */
+    /* Main */
 
     main {
-      padding: 43px 0 65px;
+      padding: 42px 0 70px;
     }
 
     .eyebrow {
-      color: #64734e;
-      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: #55594f;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1.4px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
     }
 
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      background: #71bd34;
+      border-radius: 50%;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 22px;
+      margin-bottom: 26px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
     h1 {
-      margin: 10px 0 12px;
-      font: 600 clamp(32px, 4vw, 43px)/1.12 var(--display);
-      letter-spacing: -1.5px;
+      margin-bottom: 8px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(29px, 4vw, 43px);
+      line-height: 1.1;
+      letter-spacing: -1.6px;
     }
 
-    .intro {
-      max-width: 570px;
-      margin: 0;
+    .subtitle {
+      max-width: 520px;
+      margin-bottom: 0;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.75;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
-    /* Toolbar */
+    .report-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-shrink: 0;
+      padding: 12px 16px;
+      background: var(--lime);
+      border: 1px solid var(--lime);
+      border-radius: 10px;
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.2s, background 0.2s;
+    }
 
-    .toolbar {
+    .report-button:hover {
+      background: #a7f02f;
+      transform: translateY(-1px);
+    }
+
+    /* Feed toolbar */
+
+    .feed-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
-      flex-wrap: wrap;
-      margin: 28px 0 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid var(--line);
+      gap: 12px;
+      margin-bottom: 15px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 13px;
     }
 
-    .feed-count {
+    .feed-status {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
       color: var(--muted);
       font-size: 12px;
     }
 
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .live-indicator {
+      width: 8px;
+      height: 8px;
+      background: #66b83c;
+      border-radius: 50%;
+    }
+
+    .feed-count {
+      color: var(--black);
+      font-weight: 700;
     }
 
     .refresh-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-height: 37px;
-      padding: 0 13px;
-      border: 1px solid #dfe2d9;
-      border-radius: 9px;
+      gap: 7px;
+      padding: 9px 12px;
       background: white;
-      color: var(--ink);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--black);
       font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
+      font-weight: 700;
     }
 
     .refresh-button:hover {
-      background: var(--wash);
+      background: #f1f3ed;
     }
 
     .refresh-button:disabled {
-      opacity: 0.6;
       cursor: wait;
+      opacity: 0.6;
     }
 
     /* Report cards */
 
     .feed-list {
       display: grid;
-      gap: 11px;
+      gap: 12px;
     }
 
     .report-card {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 18px;
-      padding: 19px 20px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: white;
-      transition: border-color 0.15s ease;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s, transform 0.2s;
     }
 
     .report-card:hover {
       border-color: #cbd0c2;
+      transform: translateY(-1px);
     }
 
-    .report-content {
-      min-width: 0;
-    }
-
-    .report-labels {
+    .card-top {
       display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 9px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .report-title {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -0.35px;
+      overflow-wrap: anywhere;
     }
 
     .severity {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 8px;
-      border-radius: 5px;
-      font-size: 9px;
-      font-weight: 700;
+      flex-shrink: 0;
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 800;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
@@ -250,203 +329,245 @@
       content: "";
       width: 6px;
       height: 6px;
-      border-radius: 50%;
       background: currentColor;
+      border-radius: 50%;
     }
 
-    .severity.high {
-      background: #fff0ef;
+    .severity-high {
       color: var(--red);
+      background: #fff0ef;
     }
 
-    .severity.medium {
-      background: #fff5e6;
+    .severity-medium {
       color: var(--orange);
+      background: #fff4e6;
     }
 
-    .severity.low {
-      background: #eef7e8;
+    .severity-low {
       color: var(--green);
-    }
-
-    .report-reference {
-      color: #858a80;
-      font-size: 10px;
-    }
-
-    .report-title {
-      margin: 0;
-      font: 600 16px/1.45 var(--display);
-      letter-spacing: -0.25px;
-      overflow-wrap: anywhere;
+      background: #edf8e9;
     }
 
     .report-description {
-      margin: 6px 0 0;
-      color: #62675d;
-      font-size: 12px;
-      line-height: 1.65;
+      margin-bottom: 17px;
+      color: #62665d;
+      font-size: 13px;
+      line-height: 1.7;
       overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 13px;
+      border-top: 1px solid #eff0eb;
     }
 
     .report-meta {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px 16px;
-      margin-top: 12px;
-      color: #777d71;
-      font-size: 10px;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 11px;
     }
 
     .meta-item {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      overflow-wrap: anywhere;
-    }
-
-    .meta-dot {
-      width: 5px;
-      height: 5px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: #a4aa9c;
+      gap: 5px;
     }
 
     .map-link {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      align-self: center;
-      min-height: 35px;
-      padding: 0 11px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
+      gap: 6px;
+      color: #30342b;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .map-link:hover {
-      border-color: var(--lime);
-      background: var(--lime);
+      text-decoration: underline;
+      text-decoration-color: var(--lime);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
     }
 
     /* Loading, empty and error states */
 
-    .state {
-      padding: 32px 20px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: var(--wash);
+    .state-card {
+      padding: 42px 20px;
       text-align: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
     }
 
-    .state-symbol {
-      width: 36px;
-      height: 36px;
+    .state-icon {
+      width: 43px;
+      height: 43px;
       display: grid;
       place-items: center;
-      margin: 0 auto 12px;
-      border-radius: 10px;
-      background: var(--lime);
-      font-size: 17px;
+      margin: 0 auto 13px;
+      background: #f0f3e9;
+      border-radius: 13px;
+      font-size: 20px;
+    }
+
+    .state-card h2 {
+      margin-bottom: 7px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 19px;
+    }
+
+    .state-card p {
+      max-width: 400px;
+      margin: 0 auto 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .state-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      background: var(--black);
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      font-size: 12px;
       font-weight: 700;
     }
 
-    .state h2 {
-      margin: 0 0 7px;
-      font: 600 17px var(--display);
-      letter-spacing: -0.3px;
+    .state-action:hover {
+      background: #30322c;
     }
 
-    .state p {
-      max-width: 410px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
+    .spinner {
+      width: 25px;
+      height: 25px;
+      margin: 0 auto 14px;
+      border: 3px solid #e8ebdf;
+      border-top-color: #789c43;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
-    .state .refresh-button {
-      margin-top: 15px;
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 23px 0 28px;
-      border-top: 1px solid var(--line);
-      color: #777d71;
-      font-size: 10px;
-    }
-
-    footer nav {
-      display: flex;
-      gap: 17px;
-    }
-
-    footer a:hover {
-      color: var(--ink);
+    .footer-note {
+      margin-top: 22px;
+      color: #85887f;
+      font-size: 11px;
+      line-height: 1.6;
+      text-align: center;
     }
 
     /* Mobile */
 
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       .shell {
-        width: calc(100% - 28px);
+        width: min(100% - 28px, 560px);
       }
 
-      .topbar {
-        min-height: 64px;
+      .nav-inner {
+        min-height: 60px;
+        gap: 10px;
       }
 
       .brand {
-        font-size: 15px;
+        gap: 8px;
+        font-size: 19px;
       }
 
-      .navlinks {
-        gap: 13px;
+      .brand-mark {
+        width: 28px;
+        height: 28px;
+      }
+
+      .nav-links {
+        gap: 12px;
         font-size: 11px;
       }
 
-      .navlinks a:not(.nav-cta):not(.active) {
+      .nav-links a:not(.active):not(.nav-cta) {
         display: none;
       }
 
       .nav-cta {
-        min-height: 35px;
-        padding: 0 11px;
+        padding: 9px 11px;
         font-size: 11px;
       }
 
       main {
-        padding: 32px 0 45px;
+        padding: 29px 0 42px;
+      }
+
+      .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 21px;
       }
 
       h1 {
-        font-size: 34px;
+        font-size: 32px;
         letter-spacing: -1.1px;
       }
 
-      .intro {
-        font-size: 12px;
+      .subtitle {
+        font-size: 13px;
       }
 
-      .toolbar {
-        margin-top: 22px;
+      .report-button {
+        padding: 10px 13px;
+      }
+
+      .feed-toolbar {
+        padding: 12px;
+      }
+
+      .feed-status {
+        gap: 7px;
+        font-size: 11px;
       }
 
       .report-card {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 13px;
         padding: 15px;
+        border-radius: 12px;
+      }
+
+      .card-top {
+        gap: 9px;
       }
 
       .report-title {
-        font-size: 15px;
+        font-size: 16px;
+      }
+
+      .severity {
+        padding: 6px 7px;
+        font-size: 9px;
+      }
+
+      .report-description {
+        margin-bottom: 14px;
+        font-size: 12px;
+      }
+
+      .card-footer {
+        align-items: flex-start;
       }
 
       .report-meta {
@@ -454,369 +575,585 @@
       }
 
       .map-link {
-        justify-self: start;
+        font-size: 11px;
       }
 
-      footer {
-        flex-direction: column;
+      .state-card {
+        padding: 32px 16px;
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        transition-duration: 0.01ms !important;
+    @media (max-width: 360px) {
+      .shell {
+        width: calc(100% - 22px);
       }
+
+      .nav-links {
+        gap: 8px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .card-top {
+        flex-direction: column;
+      }
+
+      .severity {
+        align-self: flex-start;
+      }
+    }
+
+    /* Dark mode support */
+
+    body.dark-mode {
+      --black: #f2f4ed;
+      --white: #151712;
+      --bg: #0c0d0b;
+      --muted: #a4a89d;
+      --border: #292c25;
+      --card: #151712;
+      --shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+    }
+
+    body.dark-mode .topbar {
+      background: rgba(18, 20, 16, 0.95);
+    }
+
+    body.dark-mode .nav-links {
+      color: #b6baaf;
+    }
+
+    body.dark-mode .nav-links a.active,
+    body.dark-mode .nav-links a:hover {
+      color: #f2f4ed;
+    }
+
+    body.dark-mode .nav-cta,
+    body.dark-mode .state-action {
+      background: var(--lime);
+      color: #11120f !important;
+    }
+
+    body.dark-mode .nav-cta:hover,
+    body.dark-mode .state-action:hover {
+      background: #a7f02f;
+    }
+
+    body.dark-mode .eyebrow,
+    body.dark-mode .subtitle,
+    body.dark-mode .feed-status,
+    body.dark-mode .report-description,
+    body.dark-mode .report-meta,
+    body.dark-mode .footer-note {
+      color: #a4a89d;
+    }
+
+    body.dark-mode .refresh-button {
+      background: #1b1e17;
+      border-color: var(--border);
+      color: #f2f4ed;
+    }
+
+    body.dark-mode .refresh-button:hover {
+      background: #25291f;
+    }
+
+    body.dark-mode .card-footer {
+      border-top-color: #292c25;
+    }
+
+    body.dark-mode .map-link {
+      color: #e9eee0;
+    }
+
+    body.dark-mode .state-icon {
+      background: #25291f;
+    }
+
+    body.dark-mode .severity-high {
+      background: #391f1e;
+      color: #ff8d87;
+    }
+
+    body.dark-mode .severity-medium {
+      background: #382a19;
+      color: #ffc477;
+    }
+
+    body.dark-mode .severity-low {
+      background: #1e301b;
+      color: #a8e79a;
     }
   </style>
 </head>
 
 <body>
-  <div class="shell">
-    <header class="topbar">
+  <header class="topbar">
+    <div class="shell nav-inner">
       <a class="brand" href="index.html" aria-label="NIGRANI home">
         <span class="brand-mark">N</span>
         <span>NIGRANI</span>
       </a>
 
-      <nav class="navlinks" aria-label="Main navigation">
+      <nav class="nav-links" aria-label="Main navigation">
         <a href="index.html">Home</a>
         <a href="report.html">Report</a>
-        <a href="map.html">Map</a>
-        <a class="active" href="feed.html">Public feed</a>
-        <a class="nav-cta" href="report.html">＋ Report</a>
+        <a href="map.html">Live map</a>
+        <a href="feed.html" class="active" aria-current="page">Public feed</a>
+        <a href="report.html" class="nav-cta">+ Report issue</a>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <div class="eyebrow">Community reports</div>
-      <h1>Public safety reports</h1>
-      <p class="intro">
-        See the reports submitted through NIGRANI. Report details and locations
-        depend on the information available from the backend.
-      </p>
+  <main class="shell">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      Community reports
+    </div>
 
-      <div class="toolbar">
-        <div class="feed-count" id="feedCount" aria-live="polite">
-          Loading reports…
-        </div>
-
-        <div class="toolbar-right">
-          <button class="refresh-button" id="refreshFeed" type="button">
-            ↻ Refresh
-          </button>
-        </div>
+    <section class="page-heading">
+      <div>
+        <h1>Public safety reports</h1>
+        <p class="subtitle">
+          Reported civic issues in one place. Explore submitted reports and
+          check their locations on the live map.
+        </p>
       </div>
 
-      <section class="feed-list" id="communityFeed" aria-live="polite">
-        <div class="state">
-          <div class="state-symbol">↻</div>
-          <h2>Loading reports</h2>
-          <p>Getting the latest community reports from the server.</p>
-        </div>
-      </section>
-    </main>
+      <a class="report-button" href="report.html">
+        <span aria-hidden="true">+</span>
+        Submit a report
+      </a>
+    </section>
 
-    <footer>
-      <span>© <span id="year"></span> NIGRANI · Civic safety</span>
-      <nav aria-label="Footer navigation">
-        <a href="report.html">Report</a>
-        <a href="map.html">Map</a>
-        <a href="feed.html">Public feed</a>
-      </nav>
-    </footer>
-  </div>
+    <section class="feed-toolbar" aria-label="Feed controls">
+      <div class="feed-status" aria-live="polite">
+        <span class="live-indicator"></span>
+        <span>Community feed</span>
+        <span aria-hidden="true">·</span>
+        <span class="feed-count" id="feedCount">Loading reports…</span>
+      </div>
+
+      <button class="refresh-button" id="refreshButton" type="button">
+        <span aria-hidden="true">↻</span>
+        Refresh
+      </button>
+    </section>
+
+    <section
+      class="feed-list"
+      id="feedList"
+      aria-label="Submitted public reports"
+      aria-live="polite"
+    >
+      <div class="state-card">
+        <div class="spinner" aria-hidden="true"></div>
+        <h2>Loading reports</h2>
+        <p>Fetching the latest community submissions.</p>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      NIGRANI — Civic Intelligence · Reported information may require
+      verification.
+    </p>
+  </main>
 
   <script>
-    (() => {
-      const API_BASE_URL =
-        window.NIGRANI_API_BASE_URL ||
-        localStorage.getItem("NIGRANI_API_BASE_URL") ||
-        "https://nigrani-eg4p.onrender.com/api/reports";
+    const API_BASE_URL =
+      window.NIGRANI_API_BASE_URL ||
+      localStorage.getItem("NIGRANI_API_BASE_URL") ||
+      "https://nigrani-eg4p.onrender.com/api/reports";
 
-      const feed = document.getElementById("communityFeed");
-      const count = document.getElementById("feedCount");
-      const refreshButton = document.getElementById("refreshFeed");
+    const feedList = document.getElementById("feedList");
+    const feedCount = document.getElementById("feedCount");
+    const refreshButton = document.getElementById("refreshButton");
 
-      document.getElementById("year").textContent = new Date().getFullYear();
-
-      const safeText = (value) =>
-        String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function (char) {
+        const entities = {
           "&": "&amp;",
           "<": "&lt;",
           ">": "&gt;",
           '"': "&quot;",
           "'": "&#39;"
-        })[char]);
+        };
 
-      function pick(object, keys) {
-        for (const key of keys) {
-          if (
-            object &&
-            object[key] !== undefined &&
-            object[key] !== null &&
-            object[key] !== ""
-          ) {
-            return object[key];
-          }
-        }
-        return null;
-      }
+        return entities[char];
+      });
+    }
 
-      function urgencyOf(report) {
-        const value = String(
-          pick(report, ["urgency", "severity", "priority", "risk_level", "level"]) || ""
-        ).toLowerCase();
+    function firstValue(object, keys) {
+      for (const key of keys) {
+        const value = object?.[key];
 
         if (
-          value.includes("critical") ||
-          value.includes("high") ||
-          value.includes("severe")
+          value !== undefined &&
+          value !== null &&
+          String(value).trim() !== ""
         ) {
-          return "high";
+          return value;
         }
-
-        if (value.includes("medium") || value.includes("moderate")) {
-          return "medium";
-        }
-
-        return "low";
       }
 
-      function titleOf(report) {
-        const violations = pick(report, [
-          "violations",
-          "hazards",
-          "detected_violations"
-        ]);
+      return "";
+    }
 
-        if (Array.isArray(violations) && violations.length) {
-          const first = violations[0];
+    function normalizeUrgency(report) {
+      const raw = String(
+        firstValue(report, [
+          "urgency",
+          "severity",
+          "priority",
+          "risk_level",
+          "level"
+        ])
+      ).toLowerCase();
 
-          if (typeof first === "string") {
-            return first;
-          }
-
-          return pick(first, [
-            "title",
-            "name",
-            "type",
-            "description"
-          ]) || "Community safety report";
-        }
-
-        return pick(report, [
-          "title",
-          "complaint_draft",
-          "description",
-          "message"
-        ]) || "Community safety report";
+      if (
+        /critical|urgent|high|severe|very high/.test(raw) ||
+        raw === "3"
+      ) {
+        return "high";
       }
 
-      function descriptionOf(report) {
-        const description = pick(report, [
-          "summary",
-          "explanation",
-          "details",
-          "description",
-          "message"
-        ]);
+      if (/medium|moderate|warning/.test(raw) || raw === "2") {
+        return "medium";
+      }
 
-        if (!description || String(description) === String(titleOf(report))) {
-          return "";
-        }
+      return "low";
+    }
 
+    function getTitle(report) {
+      const title = firstValue(report, [
+        "title",
+        "issue_title",
+        "category",
+        "hazard_type",
+        "type",
+        "complaint_draft"
+      ]);
+
+      if (title) {
+        return String(title);
+      }
+
+      const violations = firstValue(report, [
+        "violations",
+        "hazards",
+        "detected_violations",
+        "detected_objects"
+      ]);
+
+      if (Array.isArray(violations) && violations.length) {
+        return violations.map(item =>
+          typeof item === "string"
+            ? item
+            : firstValue(item, ["name", "label", "class", "type"]) ||
+              "Civic issue"
+        ).join(", ");
+      }
+
+      if (typeof violations === "string" && violations.trim()) {
+        return violations;
+      }
+
+      return "Civic issue reported";
+    }
+
+    function getDescription(report) {
+      const description = firstValue(report, [
+        "description",
+        "why_dangerous",
+        "explanation",
+        "summary",
+        "details",
+        "message"
+      ]);
+
+      if (description) {
         return String(description);
       }
 
-      function formatDate(value) {
-        if (!value) return "Date unavailable";
+      const draft = firstValue(report, ["complaint_draft"]);
 
-        const date = new Date(value);
-
-        if (Number.isNaN(date.getTime())) {
-          return String(value);
-        }
-
-        return date.toLocaleString([], {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
+      if (draft && draft !== getTitle(report)) {
+        return String(draft);
       }
 
-      function coordinatesOf(report) {
-        const latitude = pick(report, ["latitude", "lat"]);
-        const longitude = pick(report, ["longitude", "lng", "lon", "long"]);
+      return "No additional description provided.";
+    }
 
-        if (latitude === null || longitude === null) {
-          return null;
-        }
+    function getCoordinates(report) {
+      const latitude = Number(
+        firstValue(report, ["latitude", "lat"])
+      );
 
-        const lat = Number(latitude);
-        const lng = Number(longitude);
+      const longitude = Number(
+        firstValue(report, ["longitude", "lng", "lon", "long"])
+      );
 
-        if (
-          !Number.isFinite(lat) ||
-          !Number.isFinite(lng) ||
-          Math.abs(lat) > 90 ||
-          Math.abs(lng) > 180
-        ) {
-          return null;
-        }
-
-        return [lat, lng];
+      if (
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180 &&
+        (latitude !== 0 || longitude !== 0)
+      ) {
+        return { latitude, longitude };
       }
 
-      function showState(title, message, symbol = "!") {
-        feed.innerHTML = `
-          <div class="state">
-            <div class="state-symbol">${safeText(symbol)}</div>
-            <h2>${safeText(title)}</h2>
-            <p>${safeText(message)}</p>
-            <button class="refresh-button" id="retryFeed" type="button">
-              Try again
-            </button>
+      return null;
+    }
+
+    function getDate(report) {
+      const rawDate = firstValue(report, [
+        "created_at",
+        "timestamp",
+        "reported_at",
+        "date",
+        "submitted_at"
+      ]);
+
+      if (!rawDate) {
+        return "Date unavailable";
+      }
+
+      const date = new Date(rawDate);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(rawDate);
+      }
+
+      return date.toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function getLocation(report, coordinates) {
+      const location = firstValue(report, [
+        "location_name",
+        "address",
+        "location",
+        "area",
+        "place"
+      ]);
+
+      if (typeof location === "string" && location.trim()) {
+        return location;
+      }
+
+      if (coordinates) {
+        return (
+          coordinates.latitude.toFixed(4) +
+          ", " +
+          coordinates.longitude.toFixed(4)
+        );
+      }
+
+      return "Location not provided";
+    }
+
+    function normalizeReports(payload) {
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+
+      if (payload && Array.isArray(payload.results)) {
+        return payload.results;
+      }
+
+      if (payload && Array.isArray(payload.reports)) {
+        return payload.reports;
+      }
+
+      if (payload && Array.isArray(payload.data)) {
+        return payload.data;
+      }
+
+      return null;
+    }
+
+    function renderState(icon, title, message, retry = false) {
+      feedList.innerHTML = `
+        <div class="state-card">
+          <div class="state-icon" aria-hidden="true">${icon}</div>
+          <h2>${escapeHTML(title)}</h2>
+          <p>${escapeHTML(message)}</p>
+          ${
+            retry
+              ? '<button class="state-action" id="retryButton" type="button">Try again</button>'
+              : ""
+          }
+        </div>
+      `;
+
+      const retryButton = document.getElementById("retryButton");
+
+      if (retryButton) {
+        retryButton.addEventListener("click", loadReports);
+      }
+    }
+
+    function createReportCard(report) {
+      const urgency = normalizeUrgency(report);
+      const title = getTitle(report);
+      const description = getDescription(report);
+      const coordinates = getCoordinates(report);
+      const location = getLocation(report, coordinates);
+      const date = getDate(report);
+
+      const mapURL = coordinates
+        ? `map.html?lat=${encodeURIComponent(coordinates.latitude)}&lng=${encodeURIComponent(coordinates.longitude)}`
+        : "map.html";
+
+      const severityLabel = {
+        high: "High priority",
+        medium: "Medium priority",
+        low: "Low priority"
+      }[urgency];
+
+      return `
+        <article class="report-card">
+          <div class="card-top">
+            <h2 class="report-title">${escapeHTML(title)}</h2>
+            <span class="severity severity-${urgency}">
+              ${severityLabel}
+            </span>
           </div>
-        `;
 
-        document.getElementById("retryFeed").addEventListener("click", loadFeed);
-      }
+          <p class="report-description">${escapeHTML(description)}</p>
 
-      function renderReports(reports) {
-        count.textContent =
-          `${reports.length} report${reports.length === 1 ? "" : "s"}`;
+          <div class="card-footer">
+            <div class="report-meta">
+              <span class="meta-item">
+                <span aria-hidden="true">⌖</span>
+                ${escapeHTML(location)}
+              </span>
 
-        if (!reports.length) {
-          feed.innerHTML = `
-            <div class="state">
-              <div class="state-symbol">✓</div>
-              <h2>No reports yet</h2>
-              <p>
-                There are no submitted reports to display right now.
-                If you notice a safety concern, you can create a report.
-              </p>
-              <a class="refresh-button" href="report.html">Create a report ↗</a>
+              <span class="meta-item">
+                <span aria-hidden="true">◷</span>
+                ${escapeHTML(date)}
+              </span>
             </div>
-          `;
+
+            <a
+              class="map-link"
+              href="${mapURL}"
+              aria-label="View report location on the map"
+            >
+              View on map <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadReports() {
+      refreshButton.disabled = true;
+      refreshButton.innerHTML =
+        '<span aria-hidden="true">↻</span> Loading…';
+
+      feedCount.textContent = "Loading reports";
+
+      renderState(
+        "",
+        "Loading reports",
+        "Fetching the latest community submissions."
+      );
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL.replace(/\/+$/, "")}/`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json"
+            },
+            signal: controller.signal
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `The server returned an error (${response.status}).`
+          );
+        }
+
+        const payload = await response.json();
+        const reports = normalizeReports(payload);
+
+        if (!reports) {
+          throw new Error(
+            "The server response was not in the expected report-list format."
+          );
+        }
+
+        const visibleReports = reports.slice(0, 50);
+
+        if (visibleReports.length === 0) {
+          feedCount.textContent = "0 reports";
+
+          renderState(
+            "◎",
+            "No reports yet",
+            "Community reports will appear here after they are submitted."
+          );
+
           return;
         }
 
-        feed.innerHTML = reports.slice(0, 50).map((report, index) => {
-          const urgency = urgencyOf(report);
-          const title = titleOf(report);
-          const description = descriptionOf(report);
+        feedCount.textContent =
+          `${reports.length} ${reports.length === 1 ? "report" : "reports"}`;
 
-          const reportId = pick(report, ["id", "report_id", "reference"]);
-          const date = pick(report, [
-            "created_at",
-            "timestamp",
-            "date",
-            "reported_at"
-          ]);
+        feedList.innerHTML = visibleReports
+          .map(createReportCard)
+          .join("");
+      } catch (error) {
+        console.error("NIGRANI feed error:", error);
 
-          const coords = coordinatesOf(report);
+        feedCount.textContent = "Unavailable";
 
-          const location =
-            pick(report, ["location", "address", "area", "place"]) ||
-            (coords
-              ? `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`
-              : "Location unavailable");
+        const message =
+          error.name === "AbortError"
+            ? "The server took too long to respond. Please try again."
+            : "Reports could not be loaded. Check your connection and try again.";
 
-          const mapLink = coords
-            ? `<a class="map-link" href="map.html?lat=${encodeURIComponent(coords[0])}&lng=${encodeURIComponent(coords[1])}">View map ↗</a>`
-            : "";
+        renderState("!", "Couldn't load reports", message, true);
+      } finally {
+        clearTimeout(timeout);
 
-          const severityLabel = urgency === "high"
-            ? "Critical / High"
-            : urgency === "medium"
-              ? "Medium"
-              : "Low / Other";
-
-          return `
-            <article class="report-card">
-              <div class="report-content">
-                <div class="report-labels">
-                  <span class="severity ${urgency}">${severityLabel}</span>
-                  <span class="report-reference">
-                    ${reportId !== null
-                      ? `Report #${safeText(reportId)}`
-                      : `Report ${index + 1}`}
-                  </span>
-                </div>
-
-                <h2 class="report-title">${safeText(title)}</h2>
-
-                ${description
-                  ? `<p class="report-description">${safeText(description)}</p>`
-                  : ""}
-
-                <div class="report-meta">
-                  <span class="meta-item">
-                    <i class="meta-dot"></i>
-                    ${safeText(location)}
-                  </span>
-
-                  <span class="meta-item">
-                    <i class="meta-dot"></i>
-                    ${safeText(formatDate(date))}
-                  </span>
-                </div>
-              </div>
-
-              ${mapLink}
-            </article>
-          `;
-        }).join("");
+        refreshButton.disabled = false;
+        refreshButton.innerHTML =
+          '<span aria-hidden="true">↻</span> Refresh';
       }
+    }
 
-      async function loadFeed() {
-        refreshButton.disabled = true;
-        refreshButton.textContent = "Loading…";
-        count.textContent = "Loading reports…";
+    refreshButton.addEventListener("click", loadReports);
 
-        try {
-          const response = await fetch(
-            `${API_BASE_URL.replace(/\/$/, "")}/`,
-            { headers: { Accept: "application/json" } }
-          );
+    // Apply the saved theme if another page stores it.
+    try {
+      const savedTheme = localStorage.getItem("nigrani-theme");
 
-          if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-          }
-
-          const payload = await response.json();
-
-          const reports = Array.isArray(payload)
-            ? payload
-            : payload.results || payload.reports || payload.data || [];
-
-          if (!Array.isArray(reports)) {
-            throw new Error("Unexpected report data received.");
-          }
-
-          renderReports(reports);
-        } catch (error) {
-          console.error("Could not load NIGRANI feed:", error);
-
-          count.textContent = "Unable to load reports";
-
-          showState(
-            "Couldn’t load the feed",
-            "The backend may be waking up or temporarily unavailable. Check your connection and try again."
-          );
-        } finally {
-          refreshButton.disabled = false;
-          refreshButton.textContent = "↻ Refresh";
-        }
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
       }
+    } catch (error) {
+      console.warn("Theme preference unavailable.");
+    }
 
-      refreshButton.addEventListener("click", loadFeed);
-      loadFeed();
-    })();
+    loadReports();
   </script>
 </body>
 </html>
