@@ -15,7 +15,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const API_BASE_URL =
   window.NIGRANI_API_BASE_URL ||
   localStorage.getItem('NIGRANI_API_BASE_URL') ||
-  'https://nigrani-eg4p.onrender.com/api/reports';;
+  'https://nigrani-eg4p.onrender.com/api/reports';
 
 let cameraStream = null;
 let capturedBlob = null;
@@ -140,13 +140,10 @@ async function analyzeCapturedPhoto() {
     return toast('Description must be 500 characters or less');
   }
 
-  // Description is accepted by AnalyzeView.
   const formData = new FormData();
   formData.append('image', capturedBlob, 'nigrani-live-capture.jpg');
   if (description) formData.append('description', description);
 
-  // GPS is not required by AnalyzeView, but we collect it before submission
-  // so the final SendView receives the exact coordinates.
   await getLocation(false);
 
   setAnalysisState('Sending photo to NIGRANI AI…');
@@ -163,7 +160,6 @@ async function analyzeCapturedPhoto() {
       throw new Error(data.error || `Analysis failed (${response.status})`);
     }
 
-    // Supplied backend returns this token and requires it on /send/.
     lastAnalysisToken = data.analysis_token;
 
     const violationsText = formatViolations(data.violations);
@@ -188,7 +184,7 @@ async function analyzeCapturedPhoto() {
     `);
 
     document.querySelector('#submitReport')
-    ?.addEventListener('click', () => sendReport());
+      ?.addEventListener('click', () => sendReport());
 
     toast('Safety hazard detected');
   } catch (error) {
@@ -209,9 +205,6 @@ async function sendReport() {
   formData.append('image', capturedBlob, 'nigrani-live-capture.jpg');
   formData.append('analysis_token', lastAnalysisToken);
 
-  // SendReportSerializer accepts ONLY latitude, longitude and analysis_token.
-  // Do not send the original description here because the supplied backend
-  // does not define a description field on SendReportSerializer.
   if (currentLocation.latitude !== null && currentLocation.longitude !== null) {
     formData.append('latitude', currentLocation.latitude);
     formData.append('longitude', currentLocation.longitude);
@@ -233,7 +226,6 @@ async function sendReport() {
 
     toast('Complaint submitted successfully');
 
-    // Immediately update map/feed with the newly stored report.
     await loadLiveReports();
 
     resetCapture();
@@ -259,7 +251,6 @@ async function loadLiveReports() {
       throw new Error(data.error || `Reports failed (${response.status})`);
     }
 
-    // ReportListView returns a DRF list by default.
     const reports = Array.isArray(data)
       ? data
       : (Array.isArray(data.results) ? data.results : []);
@@ -291,8 +282,6 @@ function formatViolations(violations) {
 }
 
 function reportTitle(report) {
-  // Supplied backend has no title/type/category field at report level.
-  // violations[] is the authoritative incident information.
   if (Array.isArray(report.violations) && report.violations.length) {
     const first = report.violations[0];
     if (first?.category && first?.detail) {
@@ -376,7 +365,6 @@ function renderLiveData(reports) {
       const point = coordinates(report);
       if (!point) return;
 
-      // Preserves the existing stylized Delhi NCR map.
       const x = Math.max(
         5,
         Math.min(95, ((point.lon - 76.80) / (77.50 - 76.80)) * 100)
@@ -457,7 +445,6 @@ function renderFallbackState() {
       '<div class="feed-empty">Backend is offline or unreachable. Start Django to load live reports.</div>';
   }
 
-  // Do not overwrite map cards with fake values.
   setText('#overviewActiveReports', '--');
   setText('#overviewRouted', '--');
   setText('#overviewTotalReports', '--');
@@ -496,31 +483,45 @@ function escapeHTML(value) {
   }[ch]));
 }
 
+// ---------- Toast notifications ----------
+let toastTimeout = null;
+
 function toast(message) {
   let element = document.querySelector('#toast');
 
   if (!element) {
     element = document.createElement('div');
     element.id = 'toast';
+    element.setAttribute('role', 'status');
+    element.setAttribute('aria-live', 'polite');
 
     Object.assign(element.style, {
       position: 'fixed',
       right: '20px',
       bottom: '20px',
-      padding: '12px 15px',
-      background: '#b7ff42',
-      color: '#071009',
-      borderRadius: '8px',
+      maxWidth: 'min(360px, calc(100vw - 32px))',
+      padding: '14px 18px',
+      background: '#101B32',
+      color: '#FFFFFF',
+      border: '1px solid #C8F45A',
+      borderRadius: '12px',
+      boxShadow: '0 12px 32px rgba(16, 27, 50, 0.22)',
       zIndex: 10000,
-      fontWeight: '700',
-      fontSize: '10px'
+      fontWeight: '600',
+      fontSize: '13px',
+      lineHeight: '1.5'
     });
 
     document.body.appendChild(element);
   }
 
+  if (toastTimeout) clearTimeout(toastTimeout);
+
   element.textContent = message;
-  setTimeout(() => element.remove(), 2200);
+  toastTimeout = setTimeout(() => {
+    element.remove();
+    toastTimeout = null;
+  }, 2600);
 }
 
 // ---------- Existing cinematic loader ----------
